@@ -2,10 +2,11 @@
 /**
  * Installs this plugin into a target repository or user profile.
  *
- * Cursor and Claude Code can install from a marketplace, so for them this is a
- * convenience for local development. GitHub Copilot has no plugin system at all,
- * so for Copilot this generator is the only installation route: it copies the
- * portable skills and translates the subagents into Copilot's .agent.md format.
+ * All three clients can install this repository as a plugin from its marketplace
+ * manifest, so this script is nobody's primary route. It vendors the components as
+ * loose files instead, for people who want them committed to a repository or dropped
+ * into a profile without registering a marketplace. The Copilot path additionally
+ * rewrites the subagents into the `.agent.md` naming that client expects.
  *
  * Usage:
  *   node install.mjs --tool copilot [--target <dir>] [--scope project|user] [--dry-run]
@@ -130,9 +131,9 @@ const generateCopilotAgents = (targetDir, dryRun) => {
 };
 
 /**
- * Copilot has no hooks and no marketplace, so the pipeline conventions have to be
- * stated in the always-on instructions file instead. The block is delimited so a
- * reinstall replaces only our section.
+ * A vendored install has no plugin manifest behind it to carry the conventions, so
+ * they are stated in the always-on instructions file instead. The block is delimited
+ * so a reinstall replaces only our section.
  *
  * @param {string} target
  * @param {boolean} dryRun
@@ -155,8 +156,8 @@ const updateCopilotInstructions = (target, dryRun) => {
     '  reason.',
     '- Never disable or bypass a lint rule to make code pass.',
     '',
-    'Copilot does not support hooks, so the spec and TDD gates that Cursor and Claude Code',
-    'enforce automatically are your responsibility to follow here.',
+    'This generator does not wire up the spec and TDD gate hooks, so following them here is',
+    'your responsibility.',
     INSTRUCTIONS_FOOTER,
   ].join('\n');
 
@@ -265,7 +266,7 @@ const main = () => {
 
   if (options.tool === TOOL_COPILOT && !options.dryRun) {
     process.stdout.write(
-      '\nCopilot has no hooks, so the spec and TDD gates are advisory there. ' +
+      '\nThe spec and TDD gates are advisory in a vendored install: no hooks were wired up. ' +
         'They were written into .github/copilot-instructions.md instead.\n',
     );
   }

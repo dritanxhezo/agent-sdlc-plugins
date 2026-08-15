@@ -61,8 +61,10 @@ producing a competing plan.
 
 ## Notes on Copilot
 
-Copilot has no hook support, so the spec and TDD gates are advisory there. The installer
-writes them into `.github/copilot-instructions.md` so the agent still sees the rules.
+Copilot does support hooks, but expects them as a `hooks.json` using its own event names,
+which this plugin does not ship yet. Until it does, the spec and TDD gates are advisory
+there: the installer writes them into `.github/copilot-instructions.md` so the agent still
+sees the rules.
 
 See the [repository README](https://github.com/dritanxhezo/agent-sdlc-plugins) for
 installation and development.

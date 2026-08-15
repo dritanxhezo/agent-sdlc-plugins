@@ -172,12 +172,30 @@ Write for a human reviewer who will approve or reject the document:
 
 ## Code conventions for generated code
 
-- Interfaces are prefixed with `I`.
-- Named constants instead of magic numbers or repeated literals.
-- Methods declared as `const` arrow functions where the language allows it.
-- Logging through the project's existing logger (`logDebug` / `logError`), never bare
-  `console.log` in shipped code.
-- Bootstrap utility classes before hand-written CSS; CSS modules when Bootstrap cannot
-  express it.
-- Prefer extending an existing shared component over creating a parallel one.
-- Never disable, suppress or bypass a linter rule to make code pass.
+- Naming Conventions
+  - Components & Classes: Use PascalCase for React component names (UserProfile.tsx) and class declarations.
+  - Variables, Functions & Hooks: Use camelCase for standard variables, local functions, and custom hooks (getUserData, useAuth).
+  - Constants: Use UPPER_SNAKE_CASE for global or compile-time immutable values (MAX_RETRY_LIMIT). Use named constants instead of magic numbers or repeated literals.
+  - Files & Folders: Use PascalCase for React component files, and camelCase or kebab-case for general utilities, services, and configuration files. Use a feature-based structure, common/ for shared logic, application-wide configurations in config/, global constants & utils (if needed) in constants/
+
+- React & TypeScript Practices
+  - Functional Components: Write pure arrow functions or declarations for components (const MyComponent: React.FC<Props> = () => {}).
+  - Props Typing: Define explicit interface or type aliases for component props, avoiding implicit any types.
+  - Single Responsibility: Keep individual components small, ideally under 150–200 lines, splitting sub-components or moving business logic into custom hooks.
+  - State Management: Type useState with generics when initializing with union types or empty values (e.g., useState<User | null>(null)).
+  - Log through the project's utility loggers (`logDebug` / `logError`), never bare `console.log` in shipped code.
+  - Components: If the project provides a shared UI components library use that and extend it where possible instead of new components. If not create a shared UI components library with a Stotybook to simplify the main UI application.
+
+- HTML, CSS, JS Practices
+  - Use a classless css framework (such mvp.css) to style the application, with CSS variables to over write defaults and CSS modules. Prefer modern CSS, HTML, JS features to simplify the markup.
+  - Use concentric css to sort css properties via prettier-plugin-css-order
+  
+- Node.js & Backend Standards
+  - Layered Architecture: Separate route handlers, business logic controllers, and database access service layers cleanly.
+  - Async/Await: Prefer clean async/await syntax over raw promises, wrapping operations in explicit try/catch blocks.
+  - Environment Validation: Validate environment variables strictly at startup using validation tools like Zod or Joi.
+  - Error Handling: Use centralized custom error classes and global Express/Fastify error-handling middleware.
+
+- Tooling & Configuration
+  - Strict Mode: Enable "strict": true in your tsconfig.json for full type safety.
+  - Linting & Formatting: Integrate ESLint with TypeScript plugins alongside Prettier to automate code style consistency. Use import sorting with the eslint-plugin-simple-import-sort plugin. Never disable, suppress or bypass a linter rule to make code pass.

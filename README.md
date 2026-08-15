@@ -41,8 +41,18 @@ node agent-sdlc-plugins/plugins/agent-sdlc/bin/install.mjs --tool cursor --scope
 
 ### GitHub Copilot
 
-Copilot has no plugin system, so the components are generated into the locations Copilot
-reads. Run this from the repository you want to work in:
+Copilot CLI and VS Code read plugin marketplaces, and their manifest lookup falls back to
+`.claude-plugin/marketplace.json`, which this repository already ships:
+
+```bash
+copilot plugin marketplace add dritanxhezo/agent-sdlc-plugins
+copilot plugin install agent-sdlc@agent-sdlc-plugins
+```
+
+The skills and the MCP server match Copilot's own layout and load as they are. The
+subagents and hooks do not yet: Copilot wants `agents/*.agent.md` and a `hooks.json`,
+while this plugin ships `agents/*.md` and per-client hook configs. Until that is
+reconciled, use the generator to vendor the components into a repository instead:
 
 ```bash
 node path/to/plugins/agent-sdlc/bin/install.mjs --tool copilot
@@ -68,12 +78,12 @@ portable core plus per-client adapters:
 
 | Component        | Cursor          | Claude Code     | Copilot            |
 | ---------------- | --------------- | --------------- | ------------------ |
-| Skills           | native          | native          | generated          |
-| Subagents        | native          | native          | generated          |
-| MCP servers      | native          | native          | generated          |
+| Skills           | native          | native          | native             |
+| Subagents        | native          | native          | needs `.agent.md`  |
+| MCP servers      | native          | native          | native             |
 | Rules            | native          | via CLAUDE.md   | via instructions   |
-| Hooks            | native          | native          | **not supported**  |
-| Marketplace      | after review    | self-serve      | **none**           |
+| Hooks            | native          | native          | needs `hooks.json` |
+| Marketplace      | after review    | self-serve      | self-serve         |
 
 The root `plugin.json` conforms to [Agent Plugins 1.0](https://agent-plugins.org), the open
 vendor-neutral standard for skills and MCP servers. Cursor and Claude Code each read their
