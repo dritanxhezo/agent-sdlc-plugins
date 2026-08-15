@@ -139,7 +139,8 @@ docs/CONVENTIONS.md                 The contract every skill follows
 npm run build      # regenerate mcp.json and .mcp.json from mcp.source.json
 npm run validate   # check every manifest, skill, agent, rule and hook
 npm test           # unit tests
-node scripts/smoke.mjs   # MCP handshake and hook adapter integration
+npm run smoke      # MCP handshake and hook adapter integration
+npm run check      # everything
 ```
 
 CI runs all of the above on Linux and Windows against Node 20 and 22.

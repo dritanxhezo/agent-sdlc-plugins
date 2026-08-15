@@ -29,7 +29,7 @@ jobs:
         run: node scripts/validate.mjs
 
       - name: Unit tests
-        run: node --test "tests/**/*.test.mjs"
+        run: node scripts/test.mjs
 
       - name: Protocol smoke tests
         run: node scripts/smoke.mjs

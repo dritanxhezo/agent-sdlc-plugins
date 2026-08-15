@@ -10,8 +10,9 @@
   "scripts": {
     "build": "node scripts/build-manifests.mjs",
     "validate": "node scripts/build-manifests.mjs --check && node scripts/validate.mjs",
-    "test": "node --test \"tests/**/*.test.mjs\"",
-    "check": "npm run validate && npm test",
+    "test": "node scripts/test.mjs",
+    "smoke": "node scripts/smoke.mjs",
+    "check": "npm run validate && npm test && npm run smoke",
     "install:copilot": "node plugins/agent-sdlc/bin/install.mjs --tool copilot",
     "install:cursor": "node plugins/agent-sdlc/bin/install.mjs --tool cursor",
     "install:claude": "node plugins/agent-sdlc/bin/install.mjs --tool claude"
