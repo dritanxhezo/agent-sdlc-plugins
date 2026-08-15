@@ -3,13 +3,13 @@
  *
  * @typedef {'off' | 'warn' | 'block'} TGateMode
  *
- * @typedef {object} IGateConfig
+ * @typedef {object} GateConfig
  * @property {TGateMode} spec    Require a specification before source edits.
  * @property {TGateMode} tdd     Require a test file before source edits.
  * @property {TGateMode} secrets Scan written content for credentials.
  *
- * @typedef {object} ISdlcConfig
- * @property {IGateConfig} gates
+ * @typedef {object} SdlcConfig
+ * @property {GateConfig} gates
  * @property {string} docsRoot
  * @property {string[]} sourceDirs
  * @property {string[]} ignorePatterns
@@ -22,7 +22,7 @@ import { logDebug } from './log.mjs';
 
 const CONFIG_FILE_NAME = 'sdlc.config.json';
 
-/** @type {ISdlcConfig} */
+/** @type {SdlcConfig} */
 const DEFAULT_CONFIG = {
   gates: {
     spec: 'warn',
@@ -37,7 +37,7 @@ const DEFAULT_CONFIG = {
 
 /**
  * @param {string} root Absolute path to the workspace root.
- * @returns {ISdlcConfig}
+ * @returns {SdlcConfig}
  */
 export const loadConfig = (root) => {
   try {

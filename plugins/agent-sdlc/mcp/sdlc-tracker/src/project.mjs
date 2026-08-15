@@ -4,17 +4,17 @@
  * Issues hold a task's identity and body; the board holds the metadata GitHub
  * Issues has no native home for - estimate, phase and dependencies.
  *
- * @typedef {object} IProjectField
+ * @typedef {object} ProjectField
  * @property {string} id
  * @property {string} name
  * @property {string} dataType
  * @property {{ id: string, name: string }[]} [options]
  *
- * @typedef {object} IProjectRef
+ * @typedef {object} ProjectRef
  * @property {string} id
  * @property {number} number
  * @property {string} title
- * @property {Record<string, IProjectField>} fields
+ * @property {Record<string, ProjectField>} fields
  */
 
 import { graphql, GhError } from './gh.mjs';
@@ -135,7 +135,7 @@ const ITEMS_QUERY = `
     }
   }`;
 
-/** @param {{ nodes: object[] }} fields @returns {Record<string, IProjectField>} */
+/** @param {{ nodes: object[] }} fields @returns {Record<string, ProjectField>} */
 const indexFields = (fields) => {
   const byName = {};
   for (const node of fields?.nodes ?? []) {
@@ -150,7 +150,7 @@ const indexFields = (fields) => {
  * @param {{ owner: string, repo: string, id: string }} repo
  * @param {string} title
  * @param {string} cwd
- * @returns {IProjectRef}
+ * @returns {ProjectRef}
  */
 export const findOrCreateProject = (repo, title, cwd) => {
   const existing = graphql(REPO_PROJECTS_QUERY, { owner: repo.owner, repo: repo.repo }, { cwd });
@@ -182,9 +182,9 @@ export const findOrCreateProject = (repo, title, cwd) => {
 /**
  * Creates the custom fields the tracker relies on, skipping any that exist.
  *
- * @param {IProjectRef} project
+ * @param {ProjectRef} project
  * @param {string} cwd
- * @returns {{ created: string[], fields: Record<string, IProjectField> }}
+ * @returns {{ created: string[], fields: Record<string, ProjectField> }}
  */
 export const ensureFields = (project, cwd) => {
   const wanted = [
@@ -226,7 +226,7 @@ export const addIssueToProject = (projectId, issueNodeId, cwd) => {
  * @param {object} args
  * @param {string} args.projectId
  * @param {string} args.itemId
- * @param {IProjectField} args.field
+ * @param {ProjectField} args.field
  * @param {string | number} args.value
  * @param {string} args.cwd
  */

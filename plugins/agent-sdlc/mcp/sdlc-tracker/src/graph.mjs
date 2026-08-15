@@ -1,7 +1,7 @@
 /**
  * Dependency ordering and critical path.
  *
- * @typedef {object} ITask
+ * @typedef {object} Task
  * @property {string} taskId
  * @property {string} title
  * @property {string} phase
@@ -9,7 +9,7 @@
  * @property {number} estimate
  * @property {string[]} dependsOn
  *
- * @typedef {object} IGraphResult
+ * @typedef {object} GraphResult
  * @property {string[]} order        Task ids in a valid execution order.
  * @property {string[][]} cycles     Any dependency cycles found.
  * @property {string[]} missing      Referenced task ids that do not exist.
@@ -30,8 +30,8 @@ export const parseDependsOn = (value) =>
  * Kahn's algorithm, retaining unresolved nodes so cycles can be reported rather
  * than silently dropped.
  *
- * @param {ITask[]} tasks
- * @returns {IGraphResult}
+ * @param {Task[]} tasks
+ * @returns {GraphResult}
  */
 export const buildGraph = (tasks) => {
   const byId = new Map(tasks.map((task) => [task.taskId, task]));
@@ -77,7 +77,7 @@ export const buildGraph = (tasks) => {
 /**
  * @param {string[]} order
  * @param {Map<string, string[]>} dependencies
- * @param {Map<string, ITask>} byId
+ * @param {Map<string, Task>} byId
  */
 const longestPath = (order, dependencies, byId) => {
   /** @type {Map<string, { hours: number, from: string | null }>} */

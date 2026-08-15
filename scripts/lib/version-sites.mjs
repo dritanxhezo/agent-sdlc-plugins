@@ -10,9 +10,9 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-/** @typedef {{ file: string, pointer: string[], label: string }} IVersionSite */
+/** @typedef {{ file: string, pointer: string[], label: string }} VersionSite */
 
-/** @param {string} repoRoot @returns {IVersionSite[]} */
+/** @param {string} repoRoot @returns {VersionSite[]} */
 export const versionSites = (repoRoot) => {
   const plugin = join(repoRoot, 'plugins', 'agent-sdlc');
   return [

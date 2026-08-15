@@ -5,7 +5,7 @@
  * nudges the agent is decided by the caller from the configured gate mode, so
  * the detection logic exists in exactly one place.
  *
- * @typedef {object} IGateFinding
+ * @typedef {object} GateFinding
  * @property {'spec' | 'tdd'} gate
  * @property {string} message   Written for the agent, so it states the remedy.
  */
@@ -22,8 +22,8 @@ const MAX_SUGGESTED_PATHS = 3;
  *
  * @param {string} filePath Absolute path being written.
  * @param {string} root Absolute workspace root.
- * @param {import('./config.mjs').ISdlcConfig} config
- * @returns {IGateFinding | null}
+ * @param {import('./config.mjs').SdlcConfig} config
+ * @returns {GateFinding | null}
  */
 export const checkSpecGate = (filePath, root, config) => {
   if (config.gates.spec === 'off') return null;
@@ -51,8 +51,8 @@ export const checkSpecGate = (filePath, root, config) => {
  *
  * @param {string} filePath Absolute path being written.
  * @param {string} root Absolute workspace root.
- * @param {import('./config.mjs').ISdlcConfig} config
- * @returns {IGateFinding | null}
+ * @param {import('./config.mjs').SdlcConfig} config
+ * @returns {GateFinding | null}
  */
 export const checkTddGate = (filePath, root, config) => {
   if (config.gates.tdd === 'off') return null;
@@ -79,9 +79,9 @@ export const checkTddGate = (filePath, root, config) => {
 /**
  * @param {string} filePath
  * @param {string} root
- * @param {import('./config.mjs').ISdlcConfig} config
+ * @param {import('./config.mjs').SdlcConfig} config
  * @param {'block' | 'warn'} mode Only gates set to this mode are evaluated.
- * @returns {IGateFinding[]}
+ * @returns {GateFinding[]}
  */
 export const runGates = (filePath, root, config, mode) => {
   const findings = [];

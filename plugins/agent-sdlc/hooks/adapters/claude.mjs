@@ -3,8 +3,8 @@
  * Claude Code hook adapter.
  *
  * Usage: node claude.mjs <action>
- * Translates Claude's PascalCase hook payloads into an IHookContext and its
- * IHookDecision back into Claude's hookSpecificOutput shape.
+ * Translates Claude's PascalCase hook payloads into a HookContext and its
+ * HookDecision back into Claude's hookSpecificOutput shape.
  */
 
 import { runAction, ACTIONS } from '../lib/core.mjs';
@@ -62,7 +62,7 @@ const buildContext = (action, payload) => {
   };
 };
 
-/** @param {string} action @param {import('../lib/core.mjs').IHookDecision} decision */
+/** @param {string} action @param {import('../lib/core.mjs').HookDecision} decision */
 const toClaudeResponse = (action, decision) => {
   const hookEventName = EVENT_BY_ACTION[action] ?? 'PostToolUse';
 

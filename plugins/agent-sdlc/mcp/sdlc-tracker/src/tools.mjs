@@ -59,7 +59,7 @@ const resolveContext = ({ cwd, projectTitle }) => {
 
 /**
  * @param {object} ctx
- * @returns {import('./graph.mjs').ITask[]}
+ * @returns {import('./graph.mjs').Task[]}
  */
 const readTasks = ({ project, cwd }) => {
   const items = listProjectItems(project.id, cwd);

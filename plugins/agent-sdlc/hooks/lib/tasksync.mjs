@@ -5,7 +5,7 @@
  * the task id, and delegates the update to the tracker CLI so that issue writes
  * happen in exactly one place.
  *
- * @typedef {object} ITaskEvent
+ * @typedef {object} TaskEvent
  * @property {string} taskId
  * @property {'in progress' | 'in review' | 'done'} status
  * @property {string} trigger Human-readable reason, used in the nudge message.
@@ -22,7 +22,7 @@ const CLI_TIMEOUT_MS = 15000;
 const PLUGIN_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const TRACKER_CLI = join(PLUGIN_ROOT, 'mcp', 'sdlc-tracker', 'src', 'cli.mjs');
 
-/** @type {{ pattern: RegExp, status: ITaskEvent['status'], trigger: string }[]} */
+/** @type {{ pattern: RegExp, status: TaskEvent['status'], trigger: string }[]} */
 const COMMAND_RULES = [
   { pattern: /\bgh\s+pr\s+merge\b/, status: 'done', trigger: 'pull request merged' },
   { pattern: /\bgit\s+merge\b/, status: 'done', trigger: 'branch merged' },
@@ -34,7 +34,7 @@ const COMMAND_RULES = [
 /**
  * @param {string} command The shell command that just ran.
  * @param {string} output Its terminal output, which often carries the task id.
- * @returns {ITaskEvent | null}
+ * @returns {TaskEvent | null}
  */
 export const parseTaskEvent = (command, output) => {
   if (typeof command !== 'string' || command.length === 0) return null;
@@ -56,7 +56,7 @@ export const parseTaskEvent = (command, output) => {
 };
 
 /**
- * @param {ITaskEvent} event
+ * @param {TaskEvent} event
  * @param {string} cwd Absolute working directory of the git command.
  * @returns {{ ok: boolean, detail: string }}
  */

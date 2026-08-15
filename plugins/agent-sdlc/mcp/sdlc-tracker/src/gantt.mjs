@@ -29,7 +29,7 @@ const toDuration = (hours) => {
 };
 
 /**
- * @param {import('./graph.mjs').ITask[]} tasks
+ * @param {import('./graph.mjs').Task[]} tasks
  * @param {object} options
  * @param {string} options.title
  * @param {string} options.startDate ISO date the plan begins.

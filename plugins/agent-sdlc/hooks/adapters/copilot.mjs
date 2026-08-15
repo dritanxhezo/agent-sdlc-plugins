@@ -3,8 +3,8 @@
  * GitHub Copilot hook adapter.
  *
  * Usage: node copilot.mjs <action>
- * Translates Copilot's camelCase hook payloads into an IHookContext and its
- * IHookDecision back into Copilot's response shape.
+ * Translates Copilot's camelCase hook payloads into a HookContext and its
+ * HookDecision back into Copilot's response shape.
  *
  * Response shapes per Copilot's hooks reference:
  *   sessionStart -> { additionalContext }
@@ -77,7 +77,7 @@ const buildContext = (action, payload) => {
   };
 };
 
-/** @param {string} action @param {import('../lib/core.mjs').IHookDecision} decision */
+/** @param {string} action @param {import('../lib/core.mjs').HookDecision} decision */
 const toCopilotResponse = (action, decision) => {
   if (action === ACTIONS.PRE_WRITE) {
     if (decision.decision === 'deny') {

@@ -1,11 +1,11 @@
 /**
  * The single implementation of every hook behaviour.
  *
- * Client adapters normalise their payload into an IHookContext, call runAction,
- * and translate the returned IHookDecision back into their own response shape.
+ * Client adapters normalise their payload into a HookContext, call runAction,
+ * and translate the returned HookDecision back into their own response shape.
  * Nothing client-specific belongs in this file.
  *
- * @typedef {object} IHookContext
+ * @typedef {object} HookContext
  * @property {string} action   One of ACTIONS.
  * @property {string} root     Absolute workspace root.
  * @property {string} [filePath]
@@ -14,7 +14,7 @@
  * @property {string} [output]
  * @property {string} [cwd]
  *
- * @typedef {object} IHookDecision
+ * @typedef {object} HookDecision
  * @property {'allow' | 'deny'} decision
  * @property {string} [message]  Explanation and remedy, addressed to the agent.
  * @property {string} [context]  Extra context to inject into the conversation.
@@ -36,7 +36,7 @@ const ACTIONS = Object.freeze({
 
 const ALLOW = Object.freeze({ decision: 'allow' });
 
-/** @param {IHookContext} ctx @param {import('./config.mjs').ISdlcConfig} config */
+/** @param {HookContext} ctx @param {import('./config.mjs').SdlcConfig} config */
 const handleSessionContext = (ctx, config) => {
   const context = buildSessionContext(ctx.root, config);
   return context ? { decision: 'allow', context } : ALLOW;
@@ -46,9 +46,9 @@ const handleSessionContext = (ctx, config) => {
  * Blocking checks. Secrets always block; the spec and TDD gates only block when
  * explicitly configured to, which is not the default.
  *
- * @param {IHookContext} ctx
- * @param {import('./config.mjs').ISdlcConfig} config
- * @returns {IHookDecision}
+ * @param {HookContext} ctx
+ * @param {import('./config.mjs').SdlcConfig} config
+ * @returns {HookDecision}
  */
 const handlePreWrite = (ctx, config) => {
   if (!ctx.filePath) return ALLOW;
@@ -79,9 +79,9 @@ const handlePreWrite = (ctx, config) => {
  * Advisory checks. These run after the write succeeded and only ever nudge,
  * which is what makes the gates soft.
  *
- * @param {IHookContext} ctx
- * @param {import('./config.mjs').ISdlcConfig} config
- * @returns {IHookDecision}
+ * @param {HookContext} ctx
+ * @param {import('./config.mjs').SdlcConfig} config
+ * @returns {HookDecision}
  */
 const handlePostWrite = (ctx, config) => {
   if (!ctx.filePath) return ALLOW;
@@ -95,7 +95,7 @@ const handlePostWrite = (ctx, config) => {
   };
 };
 
-/** @param {IHookContext} ctx @returns {IHookDecision} */
+/** @param {HookContext} ctx @returns {HookDecision} */
 const handleTaskSync = (ctx) => {
   const event = parseTaskEvent(ctx.command ?? '', ctx.output ?? '');
   if (!event) return ALLOW;
@@ -117,8 +117,8 @@ const handleTaskSync = (ctx) => {
 };
 
 /**
- * @param {IHookContext} ctx
- * @returns {IHookDecision}
+ * @param {HookContext} ctx
+ * @returns {HookDecision}
  */
 export const runAction = (ctx) => {
   const config = loadConfig(ctx.root);

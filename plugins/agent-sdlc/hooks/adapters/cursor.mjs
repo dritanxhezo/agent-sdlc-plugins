@@ -3,8 +3,8 @@
  * Cursor hook adapter.
  *
  * Usage: node cursor.mjs <action>
- * Translates Cursor's camelCase hook payloads into an IHookContext and its
- * IHookDecision back into Cursor's response shape.
+ * Translates Cursor's camelCase hook payloads into a HookContext and its
+ * HookDecision back into Cursor's response shape.
  *
  * Response shapes per Cursor's hooks specification:
  *   sessionStart -> { additional_context }
@@ -63,7 +63,7 @@ const buildContext = (action, payload) => ({
   cwd: payload.cwd ?? resolveRoot(payload),
 });
 
-/** @param {string} action @param {import('../lib/core.mjs').IHookDecision} decision */
+/** @param {string} action @param {import('../lib/core.mjs').HookDecision} decision */
 const toCursorResponse = (action, decision) => {
   if (action === ACTIONS.PRE_WRITE) {
     if (decision.decision === 'deny') {

@@ -44,7 +44,7 @@ const phaseOf = (featureDir) => {
 
 /**
  * @param {string} root Absolute workspace root.
- * @param {import('./config.mjs').ISdlcConfig} config
+ * @param {import('./config.mjs').SdlcConfig} config
  * @returns {string} Markdown context, or an empty string when there is nothing useful to say.
  */
 export const buildSessionContext = (root, config) => {

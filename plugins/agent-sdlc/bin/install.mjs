@@ -33,14 +33,14 @@ const SCOPE_USER = 'user';
 const INSTRUCTIONS_HEADING = '<!-- agent-sdlc:begin -->';
 const INSTRUCTIONS_FOOTER = '<!-- agent-sdlc:end -->';
 
-/** @typedef {object} IInstallOptions
+/** @typedef {object} InstallOptions
  * @property {string} tool
  * @property {string} target
  * @property {string} scope
  * @property {boolean} dryRun
  */
 
-/** @param {string[]} argv @returns {IInstallOptions} */
+/** @param {string[]} argv @returns {InstallOptions} */
 const parseOptions = (argv) => {
   const flags = {};
   for (let index = 0; index < argv.length; index += 1) {
@@ -242,7 +242,7 @@ const writeCopilotMcpConfig = (target, dryRun) => {
   writeFile(path, `${JSON.stringify({ servers }, null, 2)}\n`, dryRun);
 };
 
-/** @param {IInstallOptions} options */
+/** @param {InstallOptions} options */
 const installCopilot = (options) => {
   const base =
     options.scope === SCOPE_USER ? join(homedir(), '.copilot') : join(options.target, '.github');
@@ -258,7 +258,7 @@ const installCopilot = (options) => {
   }
 };
 
-/** @param {IInstallOptions} options */
+/** @param {InstallOptions} options */
 const installCursor = (options) => {
   const base =
     options.scope === SCOPE_USER
@@ -275,7 +275,7 @@ const installCursor = (options) => {
   copyTree(join(PLUGIN_ROOT, 'rules'), join(base, 'rules'), options.dryRun);
 };
 
-/** @param {IInstallOptions} options */
+/** @param {InstallOptions} options */
 const installClaude = (options) => {
   const base =
     options.scope === SCOPE_USER ? join(homedir(), '.claude') : join(options.target, '.claude');

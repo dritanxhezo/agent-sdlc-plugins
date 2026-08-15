@@ -5,7 +5,7 @@
  * containing the word "token" gets switched off within a day, and a switched-off
  * scanner catches nothing.
  *
- * @typedef {object} ISecretFinding
+ * @typedef {object} SecretFinding
  * @property {string} label
  * @property {number} line
  */
@@ -35,7 +35,7 @@ const SECRET_PATTERNS = [
 
 /**
  * @param {string} content File content about to be written.
- * @returns {ISecretFinding[]} Empty when nothing credible was found.
+ * @returns {SecretFinding[]} Empty when nothing credible was found.
  */
 export const scanForSecrets = (content) => {
   if (typeof content !== 'string' || content.length === 0) return [];

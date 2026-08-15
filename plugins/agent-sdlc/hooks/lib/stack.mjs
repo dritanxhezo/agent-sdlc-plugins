@@ -5,7 +5,7 @@
  * files actually present in the project, and an unrecognised stack yields a
  * null runner so the guard stays quiet rather than guessing.
  *
- * @typedef {object} IStackProfile
+ * @typedef {object} StackProfile
  * @property {string} id
  * @property {string} runner        Command that runs the suite.
  * @property {string[]} testGlobs   Human-readable description of test locations.
@@ -17,7 +17,7 @@ import { logDebug } from './log.mjs';
 
 const NODE_MANIFEST = 'package.json';
 
-/** @type {Record<string, IStackProfile>} */
+/** @type {Record<string, StackProfile>} */
 const PROFILES = {
   vitest: { id: 'vitest', runner: 'npx vitest run', testGlobs: ['*.test.ts', '*.spec.ts'] },
   jest: { id: 'jest', runner: 'npx jest', testGlobs: ['*.test.ts', '__tests__/*.ts'] },
@@ -48,7 +48,7 @@ const hasFileMatching = (root, pattern) => {
 
 /**
  * @param {string} root Absolute workspace root.
- * @returns {IStackProfile | null} Null when no runner can be identified.
+ * @returns {StackProfile | null} Null when no runner can be identified.
  */
 export const detectStack = (root) => {
   const manifest = readNodeManifest(root);
