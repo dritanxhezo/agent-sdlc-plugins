@@ -48,9 +48,9 @@ designs, tests or code yourself.
    | all tasks closed, tests green     | done           | none             |
 
 4. **Check the gate before advancing.** Read the upstream artifact and confirm it has no
-   unresolved `OPEN QUESTION:` markers that would change the next phase's output. Soft
-   gate rules from `docs/CONVENTIONS.md` apply: escalate a genuine conflict, otherwise
-   record the assumption and proceed.
+   unresolved `OPEN QUESTION:` markers that would change the next phase's output. The
+   gates are soft: escalate a genuine conflict, otherwise record the assumption and
+   proceed.
 
 5. **Delegate to the role.** Where subagents are available, launch the matching agent
    (`business-analyst`, `solution-architect`, `qa-engineer`, `project-manager`,

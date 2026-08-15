@@ -37,13 +37,9 @@ intention.
 
 ## Code conventions
 
-- [ ] Interfaces prefixed `I`.
-- [ ] Named constants instead of magic numbers or repeated literals.
-- [ ] Methods as `const` arrow functions where the language allows.
-- [ ] `logDebug` / `logError` used; no bare `console.log`.
-- [ ] Bootstrap utilities used before hand-written CSS; CSS modules only where Bootstrap
-      cannot express it.
-- [ ] An existing shared component extended rather than a parallel one created.
+- [ ] [../../../rules/code-conventions.mdc](../../../rules/code-conventions.mdc) was read,
+      and the diff follows it — naming, typing, logging, styling, backend layering and
+      tooling.
 
 ## Before declaring the task done
 

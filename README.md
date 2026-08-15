@@ -132,6 +132,17 @@ Configure them by copying `sdlc.config.example.json` to `sdlc.config.json` in yo
 to do instead. Secrets block by default. Every hook fails open — a crash or timeout never
 stops you working.
 
+## Code conventions
+
+The code the developer and debugger roles write follows
+[`plugins/agent-sdlc/rules/code-conventions.mdc`](plugins/agent-sdlc/rules/code-conventions.mdc),
+which is the single source of truth. Edit that file to change house style. Cursor attaches it
+automatically to matching files; Claude Code and Copilot have no rules loader, so
+`tdd-implement` and `defect-triage` link to it and open it as part of their procedure.
+
+Nothing restates it. A second copy in a skill or in `docs/` is the one thing guaranteed to
+drift, and `docs/` is not shipped to installs at all.
+
 ## Repository layout
 
 ```
@@ -149,10 +160,42 @@ plugins/agent-sdlc/
 ├── mcp/sdlc-tracker/               The tracker MCP server, zero dependencies
 ├── bin/install.mjs                 Local installer and vendoring generator
 └── mcp.source.json                 Source for the generated MCP configs
-scripts/                            build, validate, smoke
+scripts/                            build, validate, smoke, version bump
 tests/                              Unit tests
-docs/CONVENTIONS.md                 The contract every skill follows
+docs/CONVENTIONS.md                 The authoring contract (not shipped to installs)
 ```
+
+## Publishing an update
+
+Clients decide whether an update exists by comparing version numbers against their cached
+copy, so a republish at the same version is invisible. Bump every manifest at once, then
+push to the default branch:
+
+```bash
+npm run bump -- minor   # or major, patch, or an explicit 1.4.2
+npm run check
+```
+
+The version appears in seven fields across six files, and `npm run validate` fails if they
+disagree — a partial bump is worse than none, because whichever manifest the client happens
+to read decides the answer.
+
+Nobody gets the update automatically. Third-party marketplaces are not on the auto-update
+path in any of the three clients, and each currently has a stale-cache bug that makes the
+obvious command report "already at the latest version". Tell colleagues to refresh the
+marketplace first, then update the plugin:
+
+| Client      | Refresh, then update                                                      |
+| ----------- | ------------------------------------------------------------------------- |
+| Copilot     | `copilot plugin marketplace update`, then `copilot plugin update agent-sdlc` |
+| Claude Code | `claude plugin marketplace update agent-sdlc-plugins`, then `/plugin update` |
+| Cursor      | Re-add the marketplace, or check out the repo into `~/.cursor/plugins/local/` |
+
+Copilot can be put on the automatic path: setting `autoUpdate: true` on this marketplace's
+`extraKnownMarketplaces` entry in user settings makes it update at session start, in
+interactive and `-p` sessions. It is skipped in CI. Claude Code accepts the same flag but
+does not currently fetch the clone behind it, and Cursor pins a personally-added marketplace
+to the commit it had when added.
 
 ## Development
 
@@ -162,6 +205,7 @@ npm run validate   # check every manifest, skill, agent, rule and hook
 npm test           # unit tests
 npm run smoke      # MCP handshake and hook adapter integration
 npm run check      # everything
+npm run bump -- minor   # set the version in every manifest at once
 ```
 
 CI runs all of the above on Linux and Windows against Node 20 and 22.

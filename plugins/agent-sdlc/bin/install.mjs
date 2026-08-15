@@ -156,6 +156,8 @@ const updateCopilotInstructions = (target, dryRun) => {
     '- Write the failing test before the implementation, and confirm it fails for the expected',
     '  reason.',
     '- Never disable or bypass a lint rule to make code pass.',
+    '- Code conventions for anything you write are in `.github/rules/code-conventions.mdc`.',
+    '  Read that file before writing source; it is the only copy.',
     '',
     'This generator does not wire up the spec and TDD gate hooks, so following them here is',
     'your responsibility.',
@@ -203,6 +205,9 @@ const installCopilot = (options) => {
 
   copyTree(join(PLUGIN_ROOT, 'skills'), join(base, 'skills'), options.dryRun);
   generateCopilotAgents(join(base, 'agents'), options.dryRun);
+  // Copilot has no rules loader, but the skills link to the conventions file by relative
+  // path, so it has to sit where they expect it or the link resolves to nothing.
+  copyTree(join(PLUGIN_ROOT, 'rules'), join(base, 'rules'), options.dryRun);
 
   if (options.scope === SCOPE_PROJECT) {
     updateCopilotInstructions(options.target, options.dryRun);
@@ -234,6 +239,7 @@ const installClaude = (options) => {
 
   copyTree(join(PLUGIN_ROOT, 'skills'), join(base, 'skills'), options.dryRun);
   copyTree(join(PLUGIN_ROOT, 'agents'), join(base, 'agents'), options.dryRun);
+  copyTree(join(PLUGIN_ROOT, 'rules'), join(base, 'rules'), options.dryRun);
 };
 
 const INSTALLERS = {

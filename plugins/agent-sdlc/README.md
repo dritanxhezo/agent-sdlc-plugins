@@ -13,8 +13,10 @@ verify; `work-breakdown` and `execution-plan` plan and publish; `tdd-implement` 
 **Agents** (6) — `business-analyst`, `solution-architect`, `qa-engineer`,
 `project-manager`, `developer`, `debugger`.
 
-**Rules** (2, Cursor) — the pipeline conventions, and code conventions scoped to source
-files.
+**Rules** (2) — the pipeline conventions, and `code-conventions.mdc`, the single source of
+truth for how generated code is written. Cursor attaches them automatically. The other two
+clients have no rules loader, so `tdd-implement`, `defect-triage`, `pr-flow` and the
+`developer` agent link to the conventions file and read it as part of their procedure.
 
 **Hooks** (Cursor and Claude Code) — session context loader, spec gate, TDD guard,
 task sync on commit and merge, credential scan.

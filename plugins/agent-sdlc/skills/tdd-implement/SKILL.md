@@ -68,17 +68,10 @@ requirements, invent test cases, or start a second task before the first is merg
 
 ### Code conventions
 
-Applies to every line you write:
-
-- Interfaces prefixed with `I` (`IOrderSummary`, not `OrderSummaryProps`).
-- Named constants instead of magic numbers or repeated literals.
-- Methods as `const` arrow functions where the language allows it.
-- Logging through the project's existing `logDebug` / `logError`, never bare
-  `console.log` in shipped code.
-- Bootstrap utility classes before hand-written CSS; CSS modules only where Bootstrap
-  cannot express it.
-- Extend an existing shared component rather than building a parallel one. If the shared
-  component is missing a capability, add the capability there.
+Read [../../rules/code-conventions.mdc](../../rules/code-conventions.mdc) before step 5 and
+apply it to every line you write. Cursor attaches that file on its own; in Claude Code and
+Copilot you have to open it. It is the only copy — nothing here restates it, so there is
+nothing to disagree with it.
 
 ### TypeScript / React / Vitest / Playwright path
 

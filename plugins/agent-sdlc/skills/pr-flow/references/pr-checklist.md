@@ -25,9 +25,8 @@ Work top to bottom. Every box is something you verified, not something you inten
 - [ ] No secrets, tokens, connection strings or real customer data.
 - [ ] No unrelated formatting churn obscuring the real change.
 - [ ] Every changed file is needed by this task.
-- [ ] House conventions hold: `I`-prefixed interfaces, named constants, `const` arrow
-      methods, `logDebug` / `logError`, Bootstrap before custom CSS, shared components
-      extended rather than duplicated.
+- [ ] House conventions hold, per
+      [../../../rules/code-conventions.mdc](../../../rules/code-conventions.mdc).
 - [ ] Nothing in the diff exceeds the task's scope. If it does, split it out and raise a
       new task — do not widen this one.
 

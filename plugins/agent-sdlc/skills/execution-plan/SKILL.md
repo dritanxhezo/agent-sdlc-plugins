@@ -50,7 +50,7 @@ skill runs, GitHub Issues is the source of truth and the document is a photograp
 
 7. **Route every later mutation through the tracker.** `task_update` for status, estimate,
    dependencies or assignee; `plan_sync` for adding or restructuring tasks. Never
-   `gh issue edit` — the tool list in `docs/CONVENTIONS.md` is the complete set.
+   `gh issue edit` — the `sdlc-tracker` tools are the complete set.
 
 8. **Refresh mode.** When the plan already exists and only needs updating, skip
    `plan_sync`: call `task_list`, `dependency_graph`, `render_gantt` and `plan_status`,

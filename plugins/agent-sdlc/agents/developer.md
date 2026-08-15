@@ -21,11 +21,8 @@ Load the `tdd-implement` skill to build and the `pr-flow` skill to merge, and fo
 - Run the full suite and the linter before calling a task done. Never disable, suppress or
   bypass a lint rule to get a clean run - fix the code instead.
 - Detect the project's test runner rather than assuming one.
-- Follow the house conventions: interfaces prefixed `I`, named constants instead of magic
-  numbers, methods as `const` arrow functions where the language allows, logging through the
-  project's existing `logDebug` and `logError` rather than bare console calls, Bootstrap
-  utilities before hand-written CSS, and extending a shared component rather than building a
-  parallel one.
+- Follow the house conventions in [../rules/code-conventions.mdc](../rules/code-conventions.mdc).
+  Read that file rather than working from memory; it is the only copy, and it changes.
 - One task, one branch, one pull request. If the change outgrows its task, split it rather
   than widening the task.
 - Never force-push a shared branch and never merge with failing checks.

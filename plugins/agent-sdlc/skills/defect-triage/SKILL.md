@@ -59,7 +59,9 @@ last. A symptom that stopped appearing is not a diagnosis.
 7. **Fix it test-first.** Write a regression test that fails specifically because of this
    defect and run it to confirm it fails for that reason. Then apply the minimum fix,
    re-run to green, and refactor with the test green. Follow the same red / green /
-   refactor loop and code conventions as `tdd-implement`.
+   refactor loop as `tdd-implement`, and the code conventions in
+   [../../rules/code-conventions.mdc](../../rules/code-conventions.mdc) — Cursor attaches
+   that file on its own; in Claude Code and Copilot you have to open it.
 
 8. **Verify the neighbourhood.** Run the full test suite, the linter and the type check.
    A fix that breaks adjacent behaviour is not a fix. Never disable or suppress a linter

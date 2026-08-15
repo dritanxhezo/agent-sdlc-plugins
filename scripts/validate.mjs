@@ -11,6 +11,8 @@ import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { join, dirname, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { versionSites, readAt, readJsonFile } from './lib/version-sites.mjs';
+
 const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const PLUGINS_DIR = join(REPO_ROOT, 'plugins');
 
@@ -142,17 +144,27 @@ const validateSkills = (pluginDir) => {
     }
 
     validateRelativeLinks(path);
+    for (const reference of filesMatching(join(skillsDir, name, 'references'), /\.(md|mdc|markdown)$/)) {
+      validateRelativeLinks(join(skillsDir, name, 'references', reference));
+    }
   }
 };
 
-/** Checks that markdown links to reference files actually resolve. */
+/**
+ * Checks that every relative markdown link resolves. A skill that points an agent at
+ * a file which is not there is worse than one that says nothing, because the agent
+ * proceeds as though it read it.
+ */
 const validateRelativeLinks = (path) => {
   const raw = readFileSync(path, 'utf8');
-  const linkPattern = /\]\((references\/[^)]+)\)/g;
+  const linkPattern = /\]\(([^)#][^)]*)\)/g;
   let match;
   while ((match = linkPattern.exec(raw)) !== null) {
-    const target = join(dirname(path), match[1]);
-    if (!existsSync(target)) fail(`${path}: links to "${match[1]}", which does not exist`);
+    const target = match[1];
+    if (/^(?:[a-z][a-z0-9+.-]*:|\/\/|#)/i.test(target)) continue;
+    if (!existsSync(join(dirname(path), target.split('#')[0]))) {
+      fail(`${path}: links to "${target}", which does not exist`);
+    }
   }
 };
 
@@ -167,6 +179,7 @@ const validateAgents = (pluginDir) => {
     }
     if (!fields.name) fail(`${path}: frontmatter needs a name`);
     if (!fields.description) fail(`${path}: frontmatter needs a description`);
+    validateRelativeLinks(path);
   }
 };
 
@@ -298,8 +311,29 @@ const validateMarketplaces = () => {
   }
 };
 
+/**
+ * Clients compare version numbers to decide whether an update exists, and each one
+ * reads a different manifest. A version that agrees with itself everywhere is the
+ * only way a republish reaches someone who already installed the plugin.
+ */
+const validateVersions = () => {
+  const sites = versionSites(REPO_ROOT).filter((site) => existsSync(site.file));
+  const found = sites.map((site) => ({ ...site, version: readAt(readJsonFile(site.file), site.pointer) }));
+
+  for (const site of found) {
+    if (typeof site.version !== 'string') fail(`${site.file}: no version at ${site.pointer.join('.')}`);
+  }
+
+  const distinct = [...new Set(found.map((site) => site.version).filter((v) => typeof v === 'string'))];
+  if (distinct.length > 1) {
+    const detail = found.map((site) => `  ${site.version} - ${site.label} (${site.file})`).join('\n');
+    fail(`plugin version disagrees across manifests, so clients will not offer the update:\n${detail}`);
+  }
+};
+
 const main = () => {
   validateMarketplaces();
+  validateVersions();
 
   const pluginDirs = subdirs(PLUGINS_DIR).map((name) => join(PLUGINS_DIR, name));
   if (pluginDirs.length === 0) fail(`${PLUGINS_DIR}: no plugins found`);
