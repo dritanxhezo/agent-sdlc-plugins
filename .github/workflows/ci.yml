@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: ['20', '22']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Check generated MCP config is in sync
+        run: node scripts/build-manifests.mjs --check
+
+      - name: Validate manifests and components
+        run: node scripts/validate.mjs
+
+      - name: Unit tests
+        run: node --test "tests/**/*.test.mjs"
+
+      - name: Protocol smoke tests
+        run: node scripts/smoke.mjs
+
+      - name: Installer dry run
+        run: |
+          node plugins/agent-sdlc/bin/install.mjs --tool copilot --dry-run
+          node plugins/agent-sdlc/bin/install.mjs --tool cursor --dry-run
+          node plugins/agent-sdlc/bin/install.mjs --tool claude --dry-run

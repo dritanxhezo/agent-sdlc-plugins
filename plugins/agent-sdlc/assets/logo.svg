@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="agent-sdlc">
+  <rect width="64" height="64" rx="14" fill="#0d1117"/>
+  <circle cx="32" cy="14" r="5" fill="#58a6ff"/>
+  <circle cx="15" cy="32" r="5" fill="#3fb950"/>
+  <circle cx="49" cy="32" r="5" fill="#d29922"/>
+  <circle cx="32" cy="50" r="5" fill="#a371f7"/>
+  <g stroke="#30363d" stroke-width="2.5" fill="none" stroke-linecap="round">
+    <path d="M32 19v26"/>
+    <path d="M20 32h24"/>
+    <path d="M19 28 28 19"/>
+    <path d="M45 28 36 19"/>
+    <path d="M19 36 28 45"/>
+    <path d="M45 36 36 45"/>
+  </g>
+  <circle cx="32" cy="32" r="4" fill="#f0f6fc"/>
+</svg>

@@ -1,0 +1,25 @@
+{
+  "name": "agent-sdlc",
+  "version": "0.1.0",
+  "description": "A full SDLC crew of agent roles that turn an idea into specs, designs, test cases, a tracked execution plan and TDD-built code.",
+  "author": {
+    "name": "Dritan Xhezo",
+    "url": "https://github.com/dritanxhezo"
+  },
+  "homepage": "https://github.com/dritanxhezo/agent-sdlc-plugins",
+  "repository": "https://github.com/dritanxhezo/agent-sdlc-plugins",
+  "license": "MIT",
+  "keywords": [
+    "sdlc",
+    "spec-driven-development",
+    "tdd",
+    "business-analysis",
+    "architecture",
+    "qa",
+    "project-management"
+  ],
+  "skills": "./skills",
+  "agents": "./agents",
+  "hooks": "./hooks/claude.json",
+  "mcpServers": "./.mcp.json"
+}

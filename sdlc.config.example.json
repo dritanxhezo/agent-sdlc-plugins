@@ -1,0 +1,18 @@
+{
+  "_comment": "Copy this to sdlc.config.json in the root of the repository you are building. Every field is optional; the defaults shown here are what applies when the file is absent.",
+
+  "gates": {
+    "spec": "warn",
+    "tdd": "warn",
+    "secrets": "block"
+  },
+
+  "_gates": "Each gate is off, warn or block. warn allows the edit and injects a reminder for the agent; block refuses the edit and tells the agent what to do instead. secrets defaults to block because a leaked credential is not a workflow preference.",
+
+  "docsRoot": "docs/sdlc",
+  "sourceDirs": ["src", "lib", "app", "server", "packages"],
+  "ignorePatterns": ["node_modules", "dist", "build", "coverage", ".git"],
+  "sessionContext": true,
+
+  "_sessionContext": "When true, each new session is given the constitution, the active features and their phases, and the active gates."
+}

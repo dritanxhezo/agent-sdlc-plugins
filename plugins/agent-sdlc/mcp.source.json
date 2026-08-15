@@ -1,0 +1,25 @@
+{
+  "_comment": "Source of truth for MCP config. Run `npm run build` to regenerate mcp.json (Cursor and Agent Plugins) and .mcp.json (Claude Code) from this file. Do not edit the generated files.",
+  "servers": {
+    "sdlc-tracker": {
+      "type": "stdio",
+      "command": "node",
+      "pluginRelativeArgs": ["mcp/sdlc-tracker/src/index.mjs"],
+      "description": "Tasks, dependencies, estimates and Gantt rendering backed by GitHub Issues and Projects v2."
+    },
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "headers": {
+        "Authorization": "Bearer ${GITHUB_PAT}"
+      },
+      "description": "Issues, pull requests and branches."
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"],
+      "description": "Browser automation, used by the QA role to execute end-to-end test cases."
+    }
+  }
+}

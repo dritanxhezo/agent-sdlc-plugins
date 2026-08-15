@@ -1,0 +1,27 @@
+{
+  "_generated": "Generated from mcp.source.json by scripts/build-manifests.mjs. Do not edit.",
+  "mcpServers": {
+    "sdlc-tracker": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "${CLAUDE_PLUGIN_ROOT}/mcp/sdlc-tracker/src/index.mjs"
+      ]
+    },
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "headers": {
+        "Authorization": "Bearer ${GITHUB_PAT}"
+      }
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest"
+      ]
+    }
+  }
+}

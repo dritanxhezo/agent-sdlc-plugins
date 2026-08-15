@@ -1,0 +1,36 @@
+{
+  "name": "agent-sdlc-plugins",
+  "owner": {
+    "name": "Dritan Xhezo"
+  },
+  "metadata": {
+    "description": "Role-based SDLC agents: business analysis, architecture, QA, project management, TDD development and debugging.",
+    "version": "0.1.0",
+    "pluginRoot": "plugins"
+  },
+  "plugins": [
+    {
+      "name": "agent-sdlc",
+      "source": "agent-sdlc",
+      "description": "A full SDLC crew of agent roles that turn an idea into specs, designs, test cases, a tracked execution plan and TDD-built code.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Dritan Xhezo"
+      },
+      "homepage": "https://github.com/dritanxhezo/agent-sdlc-plugins",
+      "repository": "https://github.com/dritanxhezo/agent-sdlc-plugins",
+      "license": "MIT",
+      "category": "workflow",
+      "keywords": [
+        "sdlc",
+        "spec-driven-development",
+        "tdd",
+        "business-analysis",
+        "architecture",
+        "qa",
+        "project-management"
+      ],
+      "tags": ["spec-kit", "github-projects", "mermaid"]
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "agent-sdlc",
+  "version": "0.1.0",
+  "description": "A full SDLC crew of agent roles that turn an idea into specs, designs, test cases, a tracked execution plan and TDD-built code.",
+  "author": {
+    "name": "Dritan Xhezo",
+    "url": "https://github.com/dritanxhezo"
+  },
+  "homepage": "https://github.com/dritanxhezo/agent-sdlc-plugins",
+  "repository": "https://github.com/dritanxhezo/agent-sdlc-plugins",
+  "license": "MIT",
+  "keywords": [
+    "sdlc",
+    "spec-driven-development",
+    "tdd",
+    "business-analysis",
+    "architecture",
+    "qa",
+    "project-management",
+    "github-projects"
+  ],
+  "extensions": {
+    "com.cursor": {
+      "manifest": ".cursor-plugin/plugin.json"
+    },
+    "com.anthropic.claude-code": {
+      "manifest": ".claude-plugin/plugin.json"
+    },
+    "com.github.copilot": {
+      "installer": "bin/install.mjs"
+    }
+  }
+}

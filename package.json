@@ -1,0 +1,25 @@
+{
+  "name": "agent-sdlc-plugins",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A marketplace of role-based SDLC agent plugins for Cursor, Claude Code and GitHub Copilot.",
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "build": "node scripts/build-manifests.mjs",
+    "validate": "node scripts/build-manifests.mjs --check && node scripts/validate.mjs",
+    "test": "node --test \"tests/**/*.test.mjs\"",
+    "check": "npm run validate && npm test",
+    "install:copilot": "node plugins/agent-sdlc/bin/install.mjs --tool copilot",
+    "install:cursor": "node plugins/agent-sdlc/bin/install.mjs --tool cursor",
+    "install:claude": "node plugins/agent-sdlc/bin/install.mjs --tool claude"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dritanxhezo/agent-sdlc-plugins.git"
+  },
+  "author": "Dritan Xhezo",
+  "license": "MIT"
+}

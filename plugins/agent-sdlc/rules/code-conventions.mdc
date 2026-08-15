@@ -1,0 +1,26 @@
+---
+description: Code conventions applied to source written by the SDLC developer and debugger roles - naming, constants, logging, styling and linting.
+alwaysApply: false
+globs: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "**/*.cs"]
+---
+
+# Code conventions
+
+- Interface names begin with `I`.
+- Named constants replace magic numbers and repeated literals. Declare them at module scope
+  in `UPPER_SNAKE_CASE`.
+- Declare methods as `const` arrow functions rather than `function` where the language
+  allows it.
+- Log through the project's existing logger - `logDebug` for diagnostics, `logError` for
+  failures - so nothing noisy survives into production. No bare `console.log` in shipped
+  code.
+- Prefer Bootstrap utility classes over hand-written CSS. Where Bootstrap cannot express
+  it, use a CSS module rather than a global stylesheet.
+- Extend an existing shared component instead of building a parallel one. When a shared
+  component nearly fits, add the missing capability to it.
+- Code must pass the linter as written. Never disable, suppress or bypass a rule to make a
+  change pass.
+- Comments explain a constraint the code cannot express. They do not narrate what the next
+  line does, or why a change was made.
+- Keep it simple: the straightforward version that a reader understands on first pass beats
+  the clever one.

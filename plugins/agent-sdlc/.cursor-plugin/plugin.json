@@ -1,0 +1,36 @@
+{
+  "name": "agent-sdlc",
+  "version": "0.1.0",
+  "description": "A full SDLC crew of agent roles that turn an idea into specs, designs, test cases, a tracked execution plan and TDD-built code.",
+  "author": {
+    "name": "Dritan Xhezo"
+  },
+  "homepage": "https://github.com/dritanxhezo/agent-sdlc-plugins",
+  "repository": "https://github.com/dritanxhezo/agent-sdlc-plugins",
+  "license": "MIT",
+  "keywords": [
+    "sdlc",
+    "spec-driven-development",
+    "tdd",
+    "business-analysis",
+    "architecture",
+    "qa",
+    "project-management"
+  ],
+  "logo": "assets/logo.svg",
+  "skills": "skills",
+  "agents": "agents",
+  "rules": "rules",
+  "hooks": "hooks/cursor.json",
+  "mcpServers": "mcp.json",
+  "variables": {
+    "type": "object",
+    "properties": {
+      "GITHUB_PAT": {
+        "type": "string",
+        "title": "GitHub personal access token",
+        "description": "Token with repo and project scopes. Used by the GitHub MCP server and the SDLC tracker to read and write issues, milestones and Projects v2 fields."
+      }
+    }
+  }
+}

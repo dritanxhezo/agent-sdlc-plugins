@@ -1,0 +1,8 @@
+# Generated files are compared byte-for-byte in CI, so they must not be
+# line-ending converted on checkout.
+*.json text eol=lf
+*.mjs text eol=lf
+*.md text eol=lf
+*.svg text eol=lf
+*.yml text eol=lf
+*.mdc text eol=lf

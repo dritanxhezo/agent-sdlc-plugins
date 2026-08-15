@@ -1,0 +1,29 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
+  "_generated": "Generated from mcp.source.json by scripts/build-manifests.mjs. Do not edit.",
+  "mcpServers": {
+    "sdlc-tracker": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "mcp/sdlc-tracker/src/index.mjs"
+      ],
+      "cwd": "${PLUGIN_ROOT}"
+    },
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "headers": {
+        "Authorization": "Bearer ${GITHUB_PAT}"
+      }
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest"
+      ]
+    }
+  }
+}

@@ -1,0 +1,39 @@
+---
+description: How the agent-sdlc role pipeline works, where its artifacts live, and which role owns which decision. Available on request when working in a repository that uses the SDLC pipeline.
+alwaysApply: false
+---
+
+# SDLC pipeline
+
+Work flows through roles in order. Each role produces one artifact and hands off.
+
+```
+business-analyst  -> brd.md, frd.md
+solution-architect -> hld.md, lld.md, adr/
+qa-engineer        -> test-cases.md
+project-manager    -> work-breakdown.md, execution-plan.md, GitHub issues
+developer          -> code, tests, pull requests
+debugger           -> defects/, fixes
+```
+
+Artifacts live in `docs/sdlc/<feature>/` in the repository being built. Identifiers are
+stable and traceable: `BR-###` -> `FR-###` -> `C-###` -> `TC-###` -> `T-###`.
+
+## Rules that hold across every role
+
+- Requirements never name a technology. Designs never restate a requirement.
+- Every downstream item traces to an upstream id. Something tracing to nothing is either
+  scope creep or a missing requirement, and both get reported rather than absorbed.
+- Tasks live in GitHub Issues, with estimates, phase and dependencies on the Projects v2
+  board. `execution-plan.md` is generated from that data and must never be hand-edited.
+  All task mutations go through the `sdlc-tracker` MCP tools.
+- Tests come before implementation, and the failing test is confirmed to fail for the right
+  reason before any code is written.
+- Gates are soft: record an assumption and continue, but escalate a genuine conflict, an
+  irreversible decision, or scope that grew beyond the approved artifact.
+
+## Spec Kit
+
+When `.specify/` exists in the repository, the `docs/sdlc/` artifacts are the upstream of
+Spec Kit rather than a replacement for it: hand the FRD and designs to `/speckit.plan` and
+`/speckit.tasks` instead of producing a competing plan.

@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "command": "node ./hooks/adapters/cursor.mjs session-context"
+      }
+    ],
+    "preToolUse": [
+      {
+        "command": "node ./hooks/adapters/cursor.mjs pre-write",
+        "matcher": "Write",
+        "timeout": 10
+      }
+    ],
+    "postToolUse": [
+      {
+        "command": "node ./hooks/adapters/cursor.mjs post-write",
+        "matcher": "Write",
+        "timeout": 10
+      },
+      {
+        "command": "node ./hooks/adapters/cursor.mjs task-sync",
+        "matcher": "Shell",
+        "timeout": 20
+      }
+    ]
+  }
+}
