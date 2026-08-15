@@ -62,7 +62,9 @@ producing a competing plan.
 ## Notes on Copilot
 
 Copilot loads this plugin from a marketplace like the other two clients, and the gates run
-there through `hooks.json` at the plugin root. A *vendored* install is the exception: it
+there through `hooks.json` at the plugin root. Note that its file tools name their content
+argument `file_text` and `new_str`, not `content` — a gate that does not read those sees an
+empty file and allows everything. A *vendored* install is the exception: it
 copies loose files with no plugin manifest behind them, so no hooks are registered and the
 gates become advisory. That is why the installer writes them into
 `.github/copilot-instructions.md` as well.

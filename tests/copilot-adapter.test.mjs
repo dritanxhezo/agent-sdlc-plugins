@@ -54,6 +54,26 @@ test('allows an ordinary write', () => {
   assert.deepEqual(response, { permissionDecision: 'allow' });
 });
 
+test('reads file_text, the field Copilot\'s own create tool sends', () => {
+  const response = run('pre-write', {
+    cwd: REPO_ROOT,
+    toolName: 'create',
+    toolArgs: { path: 'src/config.ts', file_text: SECRET_LINE },
+  });
+
+  assert.equal(response.permissionDecision, 'deny');
+});
+
+test('reads new_str, the field the str_replace editors send', () => {
+  const response = run('pre-write', {
+    cwd: REPO_ROOT,
+    toolName: 'edit',
+    toolArgs: { path: 'src/config.ts', new_str: SECRET_LINE },
+  });
+
+  assert.equal(response.permissionDecision, 'deny');
+});
+
 test('reads toolArgs delivered as a JSON string', () => {
   const response = run('pre-write', {
     cwd: REPO_ROOT,

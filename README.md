@@ -49,8 +49,11 @@ copilot plugin marketplace add dritanxhezo/agent-sdlc-plugins
 copilot plugin install agent-sdlc@agent-sdlc-plugins
 ```
 
-Verified against Copilot CLI 1.0.80: the marketplace registers, the plugin installs its 12
-skills, and all six subagents resolve as `agent-sdlc:business-analyst` and so on.
+Verified end to end against Copilot CLI 1.0.80: the marketplace registers, 12 skills
+install, all six subagents resolve as `agent-sdlc:business-analyst` and so on, the
+`sdlc-tracker` server starts and registers its seven tools, and the gates fire — a source
+file written with no test covering it is refused with the TDD message, after which the
+agent writes the test first.
 
 Or vendor the components into a repository as loose files, without a plugin:
 
@@ -94,10 +97,9 @@ response keys; the logic behind them lives once in `hooks/lib/` with a thin adap
 client. Copilot's config sits at the plugin root as `hooks.json`, the one name neither of
 the other two auto-discovers.
 
-One caveat that needs an authenticated session to settle: Copilot reads `.mcp.json`, which
-is the Claude variant using `${CLAUDE_PLUGIN_ROOT}`, and that token is documented as
-expanding only for Claude-format plugins. If the tracker server fails to start under
-Copilot, that is why.
+The plugin-root token is a non-issue in practice: Copilot injects `PLUGIN_ROOT`,
+`CLAUDE_PLUGIN_ROOT` and `COPILOT_PLUGIN_ROOT` into every plugin process, so both MCP
+variants resolve.
 
 ## Tasks live in GitHub
 

@@ -20,7 +20,23 @@ import { runAction, ACTIONS } from '../lib/core.mjs';
 import { readPayload, runAdapter, firstOf } from '../lib/io.mjs';
 
 const FILE_PATH_KEYS = ['path', 'file_path', 'filePath', 'target_file'];
-const CONTENT_KEYS = ['content', 'contents', 'new_string', 'newString', 'text'];
+
+/**
+ * `file_text` is what Copilot's own `create` tool sends, and `new_str` is the
+ * str_replace_editor convention its edit tools follow. Getting this list wrong
+ * fails silently: the gate sees empty content, finds nothing and allows the write.
+ */
+const CONTENT_KEYS = [
+  'file_text',
+  'fileText',
+  'content',
+  'contents',
+  'new_str',
+  'newStr',
+  'new_string',
+  'newString',
+  'text',
+];
 
 const ALLOW_RESPONSE = { permissionDecision: 'allow' };
 
