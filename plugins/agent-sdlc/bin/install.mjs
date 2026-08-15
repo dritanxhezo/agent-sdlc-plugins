@@ -6,7 +6,7 @@
  * manifest, so this script is nobody's primary route. It vendors the components as
  * loose files instead, for people who want them committed to a repository or dropped
  * into a profile without registering a marketplace. The Copilot path additionally
- * rewrites the subagents into the `.agent.md` naming that client expects.
+ * rewrites the subagents into Copilot's documented `.agent.md` naming.
  *
  * Usage:
  *   node install.mjs --tool copilot [--target <dir>] [--scope project|user] [--dry-run]
@@ -106,8 +106,9 @@ const splitFrontmatter = (raw) => {
 };
 
 /**
- * Copilot expects agents as `<name>.agent.md` with its own frontmatter keys, so
- * each subagent is rewritten rather than copied.
+ * Copilot documents agents as `<name>.agent.md` and keys off name and description
+ * only, so each subagent is rewritten rather than copied. Plain `.md` also loads in
+ * Copilot 1.0.80, but the documented convention is the safer thing to write out.
  *
  * @param {string} targetDir
  * @param {boolean} dryRun

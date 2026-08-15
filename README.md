@@ -49,10 +49,10 @@ copilot plugin marketplace add dritanxhezo/agent-sdlc-plugins
 copilot plugin install agent-sdlc@agent-sdlc-plugins
 ```
 
-The skills and the MCP server match Copilot's own layout and load as they are. The
-subagents and hooks do not yet: Copilot wants `agents/*.agent.md` and a `hooks.json`,
-while this plugin ships `agents/*.md` and per-client hook configs. Until that is
-reconciled, use the generator to vendor the components into a repository instead:
+Verified against Copilot CLI 1.0.80: the marketplace registers, the plugin installs its 12
+skills, and all six subagents resolve as `agent-sdlc:business-analyst` and so on.
+
+Or vendor the components into a repository as loose files, without a plugin:
 
 ```bash
 node path/to/plugins/agent-sdlc/bin/install.mjs --tool copilot
@@ -73,23 +73,31 @@ order. Or drive a single role directly: "write the BRD for …", "break this dow
 
 ## What is portable and what is not
 
-There is no single plugin format that covers all three tools, so the plugin ships a
-portable core plus per-client adapters:
+All three tools install this repository as a plugin from a marketplace manifest, and all
+three read skills, subagents, hooks and MCP servers. What differs is the file each expects
+and the payload each sends, so the plugin ships a portable core plus per-client adapters:
 
 | Component        | Cursor          | Claude Code     | Copilot            |
 | ---------------- | --------------- | --------------- | ------------------ |
 | Skills           | native          | native          | native             |
-| Subagents        | native          | native          | needs `.agent.md`  |
+| Subagents        | native          | native          | native             |
 | MCP servers      | native          | native          | native             |
 | Rules            | native          | via CLAUDE.md   | via instructions   |
-| Hooks            | native          | native          | needs `hooks.json` |
+| Hooks            | native          | native          | native             |
 | Marketplace      | after review    | self-serve      | self-serve         |
 
 The root `plugin.json` conforms to [Agent Plugins 1.0](https://agent-plugins.org), the open
 vendor-neutral standard for skills and MCP servers. Cursor and Claude Code each read their
-own manifest from the same directory. Hooks are the only component written twice, because
-the two clients use incompatible event names and payload shapes; the logic behind them
-lives once in `hooks/lib/` with a thin adapter per client.
+own manifest from the same directory, and Copilot reads the root one. Hooks are written
+three times, because each client uses different event names, payload field names and
+response keys; the logic behind them lives once in `hooks/lib/` with a thin adapter per
+client. Copilot's config sits at the plugin root as `hooks.json`, the one name neither of
+the other two auto-discovers.
+
+One caveat that needs an authenticated session to settle: Copilot reads `.mcp.json`, which
+is the Claude variant using `${CLAUDE_PLUGIN_ROOT}`, and that token is documented as
+expanding only for Claude-format plugins. If the tracker server fails to start under
+Copilot, that is why.
 
 ## Tasks live in GitHub
 
@@ -126,17 +134,18 @@ stops you working.
 
 ```
 .cursor-plugin/marketplace.json     Cursor marketplace manifest
-.claude-plugin/marketplace.json     Claude Code marketplace manifest
+.claude-plugin/marketplace.json     Claude Code and Copilot marketplace manifest
 plugins/agent-sdlc/
-├── plugin.json                     Agent Plugins 1.0 manifest (portable core)
+├── plugin.json                     Agent Plugins 1.0 manifest (portable core, read by Copilot)
 ├── .cursor-plugin/plugin.json      Cursor manifest: adds rules and hooks
 ├── .claude-plugin/plugin.json      Claude Code manifest
+├── hooks.json                      Copilot hook config, at the root where it looks
 ├── skills/                         12 role skills with artifact templates
 ├── agents/                         6 subagent definitions
 ├── rules/                          Cursor rules
 ├── hooks/{lib,adapters}/           Shared hook logic, per-client adapters
 ├── mcp/sdlc-tracker/               The tracker MCP server, zero dependencies
-├── bin/install.mjs                 Copilot generator and local installer
+├── bin/install.mjs                 Local installer and vendoring generator
 └── mcp.source.json                 Source for the generated MCP configs
 scripts/                            build, validate, smoke
 tests/                              Unit tests

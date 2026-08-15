@@ -3,7 +3,7 @@
  * End-to-end smoke test for the wire protocols.
  *
  * The unit tests cover the logic; this covers the parts that only fail in
- * integration - the MCP JSON-RPC handshake and the two hook adapters' payload
+ * integration - the MCP JSON-RPC handshake and the three hook adapters' payload
  * translation. A silent failure in either is invisible until a user hits it.
  */
 
@@ -16,6 +16,7 @@ const PLUGIN_ROOT = join(REPO_ROOT, 'plugins', 'agent-sdlc');
 const SERVER = join(PLUGIN_ROOT, 'mcp', 'sdlc-tracker', 'src', 'index.mjs');
 const CURSOR_ADAPTER = join(PLUGIN_ROOT, 'hooks', 'adapters', 'cursor.mjs');
 const CLAUDE_ADAPTER = join(PLUGIN_ROOT, 'hooks', 'adapters', 'claude.mjs');
+const COPILOT_ADAPTER = join(PLUGIN_ROOT, 'hooks', 'adapters', 'copilot.mjs');
 
 const EXPECTED_TOOLS = [
   'tracker_init', 'plan_sync', 'task_list', 'task_update',
@@ -159,6 +160,35 @@ process.stdout.write('\nClaude hook adapter\n');
     tool_input: { file_path: join(REPO_ROOT, 'docs', 'notes.md'), content: '# notes' },
   });
   check('allows an ordinary write', allow.stdout === '{}' || !allow.stdout.includes('deny'), allow.stdout);
+}
+
+process.stdout.write('\nCopilot hook adapter\n');
+{
+  const deny = runWithPayload(COPILOT_ADAPTER, ['pre-write'], {
+    cwd: REPO_ROOT,
+    toolName: 'create',
+    toolArgs: { path: join(REPO_ROOT, 'src', 'leak.ts'), content: LEAKED_SECRET },
+  });
+  const denyBody = JSON.parse(deny.stdout || '{}');
+  check('blocks a credential write', denyBody.permissionDecision === 'deny', deny.stdout);
+  check('gives a decision reason', /credential/i.test(denyBody.permissionDecisionReason ?? ''));
+
+  const allow = runWithPayload(COPILOT_ADAPTER, ['pre-write'], {
+    cwd: REPO_ROOT,
+    toolName: 'create',
+    toolArgs: { path: join(REPO_ROOT, 'docs', 'notes.md'), content: '# notes' },
+  });
+  check('allows an ordinary write',
+    JSON.parse(allow.stdout || '{}').permissionDecision === 'allow', allow.stdout);
+
+  const postWrite = runWithPayload(COPILOT_ADAPTER, ['task-sync'], {
+    cwd: REPO_ROOT,
+    toolName: 'bash',
+    toolArgs: { command: 'git checkout -b feature/T-001-thing' },
+    toolResult: { resultType: 'success', textResultForLlm: 'Switched to a new branch' },
+  });
+  check('reports task sync as additionalContext',
+    typeof JSON.parse(postWrite.stdout || '{}').additionalContext === 'string', postWrite.stdout);
 }
 
 process.stdout.write('\nTracker CLI\n');

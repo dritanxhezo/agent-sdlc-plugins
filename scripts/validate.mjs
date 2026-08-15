@@ -212,6 +212,39 @@ const validateHooks = (pluginDir) => {
       }
     }
   }
+
+  validateCopilotHooks(pluginDir);
+};
+
+/**
+ * Copilot auto-discovers `hooks.json` at the plugin root, which is why the file
+ * lives there rather than beside the other two: no client manifest can point at
+ * it, and neither Cursor nor Claude Code looks for that name.
+ *
+ * @param {string} pluginDir
+ */
+const validateCopilotHooks = (pluginDir) => {
+  const path = join(pluginDir, 'hooks.json');
+  if (!existsSync(path)) {
+    warn(`${path}: missing, so the gates will not fire in GitHub Copilot`);
+    return;
+  }
+
+  const manifest = readJson(path);
+  if (!manifest) return;
+
+  if (manifest.version !== 1) fail(`${path}: version must be 1, or the whole file is rejected`);
+
+  for (const [event, entries] of Object.entries(manifest.hooks ?? {})) {
+    if (event[0] !== event[0].toLowerCase()) {
+      fail(`${path}: "${event}" should be camelCase - PascalCase switches Copilot to Claude payload names`);
+    }
+    if (!Array.isArray(entries)) {
+      fail(`${path}: "${event}" must be an array`);
+      continue;
+    }
+    for (const entry of entries) validateHookCommand(path, pluginDir, entry.command);
+  }
 };
 
 /** Extracts the script path from a hook command and checks it exists. */
