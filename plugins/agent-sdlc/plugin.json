@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "agent-sdlc",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A full SDLC crew of agent roles that turn an idea into specs, designs, test cases, a tracked execution plan and TDD-built code.",
   "author": {
     "name": "Dritan Xhezo",

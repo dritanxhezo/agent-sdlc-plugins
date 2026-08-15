@@ -60,8 +60,9 @@ last. A symptom that stopped appearing is not a diagnosis.
    defect and run it to confirm it fails for that reason. Then apply the minimum fix,
    re-run to green, and refactor with the test green. Follow the same red / green /
    refactor loop as `tdd-implement`, and the code conventions in
-   [../../rules/code-conventions.mdc](../../rules/code-conventions.mdc) — Cursor attaches
-   that file on its own; in Claude Code and Copilot you have to open it.
+   [../../rules/code-conventions.mdc](../../rules/code-conventions.mdc) plus the per-stack
+   file it indexes — Cursor attaches those by their globs; in Claude Code and Copilot you
+   have to open them.
 
 8. **Verify the neighbourhood.** Run the full test suite, the linter and the type check.
    A fix that breaks adjacent behaviour is not a fix. Never disable or suppress a linter

@@ -134,13 +134,26 @@ stops you working.
 
 ## Code conventions
 
-The code the developer and debugger roles write follows
-[`plugins/agent-sdlc/rules/code-conventions.mdc`](plugins/agent-sdlc/rules/code-conventions.mdc),
-which is the single source of truth. Edit that file to change house style. Cursor attaches it
-automatically to matching files; Claude Code and Copilot have no rules loader, so
-`tdd-implement` and `defect-triage` link to it and open it as part of their procedure.
+The code the developer and debugger roles write follows the rules in
+[`plugins/agent-sdlc/rules/`](plugins/agent-sdlc/rules), which are the single source of truth.
+Edit them to change house style:
 
-Nothing restates it. A second copy in a skill or in `docs/` is the one thing guaranteed to
+| File                        | Scope                                                       |
+| --------------------------- | ----------------------------------------------------------- |
+| `code-conventions.mdc`      | Language-agnostic, and indexes the rest                     |
+| `code-conventions-ts.mdc`   | TypeScript, React, Node, CSS                                |
+
+The split exists because `globs` is per-file. One combined file would either attach React and
+CSS guidance while someone edits a `.cs` file, or attach nothing — and the first is worse,
+because an agent will try to comply with whatever is in front of it. Adding a stack means a
+new file with its own globs, listed in the core file's index.
+
+Cursor attaches these by their globs. Copilot has the same capability under a different name,
+so a vendored install generates `.github/instructions/*.instructions.md` with an equivalent
+`applyTo`. Claude Code has no glob mechanism, so `tdd-implement` and `defect-triage` link to
+the core file and open it as part of their procedure.
+
+Nothing restates them. A second copy in a skill or in `docs/` is the one thing guaranteed to
 drift, and `docs/` is not shipped to installs at all.
 
 ## Repository layout

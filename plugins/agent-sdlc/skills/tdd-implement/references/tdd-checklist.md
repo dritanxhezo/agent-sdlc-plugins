@@ -38,8 +38,7 @@ intention.
 ## Code conventions
 
 - [ ] [../../../rules/code-conventions.mdc](../../../rules/code-conventions.mdc) was read,
-      and the diff follows it — naming, typing, logging, styling, backend layering and
-      tooling.
+      along with the per-stack file it indexes, and the diff follows both.
 
 ## Before declaring the task done
 

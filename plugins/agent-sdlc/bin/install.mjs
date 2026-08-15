@@ -132,6 +132,50 @@ const generateCopilotAgents = (targetDir, dryRun) => {
 };
 
 /**
+ * Copilot's own answer to Cursor's glob-scoped rules: an `.instructions.md` file whose
+ * `applyTo` frontmatter decides which paths it covers. Generating these from the rules
+ * means a C# file never gets the React conventions attached, and Copilot loads them
+ * itself rather than relying on a skill to follow a link.
+ *
+ * The `rules/` copy still gets written alongside, because the skills link to it by
+ * relative path and a dead link is worse than no link.
+ *
+ * @param {string} targetDir
+ * @param {boolean} dryRun
+ */
+const generateCopilotInstructions = (targetDir, dryRun) => {
+  const sourceDir = join(PLUGIN_ROOT, 'rules');
+  if (!existsSync(sourceDir)) return;
+
+  for (const file of readdirSync(sourceDir).filter((name) => name.endsWith('.mdc'))) {
+    const { fields, body } = splitFrontmatter(readFileSync(join(sourceDir, file), 'utf8'));
+    const name = basename(file, '.mdc');
+
+    // Cursor takes a JSON array of globs; Copilot takes one comma-separated string.
+    const globs = (fields.globs ?? '')
+      .replace(/^\[|\]$/g, '')
+      .split(',')
+      .map((glob) => glob.trim().replace(/^["']|["']$/g, ''))
+      .filter(Boolean);
+    // A rule with no globs is Cursor's on-request mode, which Copilot has no equivalent
+    // of. Forcing it to "**" would inline it into every session, so it is left to the
+    // summary in copilot-instructions.md instead.
+    if (globs.length === 0 && fields.alwaysApply !== 'true') continue;
+    const applyTo = fields.alwaysApply === 'true' ? '**' : globs.join(',');
+
+    const frontmatter = ['---', `applyTo: "${applyTo}"`];
+    if (fields.description) frontmatter.push(`description: ${fields.description}`);
+    frontmatter.push('---', '');
+
+    // Every .mdc mention in a rule body refers to a sibling rule, and siblings are
+    // renamed on the way out, so link targets and their labels both move.
+    const linked = body.trim().replace(/([A-Za-z0-9._-]+)\.mdc\b/g, '$1.instructions.md');
+
+    writeFile(join(targetDir, `${name}.instructions.md`), `${frontmatter.join('\n')}${linked}\n`, dryRun);
+  }
+};
+
+/**
  * A vendored install has no plugin manifest behind it to carry the conventions, so
  * they are stated in the always-on instructions file instead. The block is delimited
  * so a reinstall replaces only our section.
@@ -156,8 +200,8 @@ const updateCopilotInstructions = (target, dryRun) => {
     '- Write the failing test before the implementation, and confirm it fails for the expected',
     '  reason.',
     '- Never disable or bypass a lint rule to make code pass.',
-    '- Code conventions for anything you write are in `.github/rules/code-conventions.mdc`.',
-    '  Read that file before writing source; it is the only copy.',
+    '- Code conventions are scoped by path in `.github/instructions/`, which Copilot loads',
+    '  for matching files. The same text is in `.github/rules/` because the skills link there.',
     '',
     'This generator does not wire up the spec and TDD gate hooks, so following them here is',
     'your responsibility.',
@@ -205,9 +249,8 @@ const installCopilot = (options) => {
 
   copyTree(join(PLUGIN_ROOT, 'skills'), join(base, 'skills'), options.dryRun);
   generateCopilotAgents(join(base, 'agents'), options.dryRun);
-  // Copilot has no rules loader, but the skills link to the conventions file by relative
-  // path, so it has to sit where they expect it or the link resolves to nothing.
   copyTree(join(PLUGIN_ROOT, 'rules'), join(base, 'rules'), options.dryRun);
+  generateCopilotInstructions(join(base, 'instructions'), options.dryRun);
 
   if (options.scope === SCOPE_PROJECT) {
     updateCopilotInstructions(options.target, options.dryRun);

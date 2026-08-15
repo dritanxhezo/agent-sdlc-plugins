@@ -1,0 +1,57 @@
+---
+description: TypeScript, React, Node and CSS conventions - casing, component and props typing, state, styling, backend layering and tooling configuration.
+alwaysApply: false
+globs: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "**/*.mjs", "**/*.cjs", "**/*.css", "**/*.scss"]
+---
+
+# TypeScript, React and Node conventions
+
+Applies on top of [code-conventions.mdc](code-conventions.mdc), which holds everything that
+is not specific to this stack.
+
+## Casing
+
+- **Components and classes**: PascalCase (`UserProfile.tsx`).
+- **Variables, functions and hooks**: camelCase (`getUserData`, `useAuth`).
+- **Constants**: UPPER_SNAKE_CASE for global or compile-time immutable values
+  (`MAX_RETRY_LIMIT`).
+- **Files**: PascalCase for React component files, camelCase or kebab-case for utilities,
+  services and configuration.
+
+## React and TypeScript
+
+- **Functional components**: pure arrow functions or declarations
+  (`const MyComponent: React.FC<IProps> = () => {}`).
+- **Method declarations**: `const` arrow functions rather than `function`.
+- **Props typing**: an explicit interface or type alias per component. No implicit `any`.
+- **Component size**: ideally under 150–200 lines. Split out sub-components or move business
+  logic into custom hooks.
+- **State**: type `useState` with generics when initialising with a union or an empty value
+  (`useState<IUser | null>(null)`).
+- **Logging**: the project's `logDebug` and `logError`, never bare `console.log` in shipped
+  code.
+- **Shared components**: if the project has a shared UI component library, use and extend
+  it. If it has none, create one with a Storybook so the main application stays simple.
+
+## HTML, CSS and JS
+
+- Style with a classless CSS framework such as mvp.css, overriding defaults through CSS
+  variables, plus CSS modules for the rest. Prefer modern CSS, HTML and JS features that
+  simplify the markup.
+- Sort CSS properties concentrically via `prettier-plugin-css-order`.
+
+## Node and backend
+
+- **Layered architecture**: route handlers, business logic controllers and data access
+  services stay cleanly separated.
+- **Async**: `async`/`await` over raw promises, with explicit `try`/`catch`.
+- **Environment validation**: validate environment variables strictly at startup with Zod
+  or Joi.
+- **Error handling**: centralised custom error classes plus global Express or Fastify
+  error-handling middleware.
+
+## Tooling
+
+- `"strict": true` in `tsconfig.json`.
+- ESLint with the TypeScript plugins alongside Prettier, and import sorting via
+  `eslint-plugin-simple-import-sort`.

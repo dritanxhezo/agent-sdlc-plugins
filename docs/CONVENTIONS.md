@@ -172,12 +172,14 @@ Write for a human reviewer who will approve or reject the document:
 
 ## Code conventions for generated code
 
-These live in
-[`plugins/agent-sdlc/rules/code-conventions.mdc`](../plugins/agent-sdlc/rules/code-conventions.mdc),
-not here, and that file is the single source of truth. The reason is distribution: this
-document sits outside `plugins/agent-sdlc/`, which is what a marketplace install copies, so
-nothing written here reaches an installed agent. The rule file ships, Cursor attaches it
-automatically, and the `tdd-implement` and `defect-triage` skills point Claude Code and
-Copilot at the same file.
+These live in [`plugins/agent-sdlc/rules/`](../plugins/agent-sdlc/rules), not here, and those
+files are the single source of truth. The reason is distribution: this document sits outside
+`plugins/agent-sdlc/`, which is what a marketplace install copies, so nothing written here
+reaches an installed agent.
 
-Edit the rule file. Do not restate its content here.
+`code-conventions.mdc` holds what is true in any language and indexes one file per stack, each
+scoped by its own globs. A new stack is a new file listed in that index — never a new section
+in a combined file, because a rule's globs apply to the whole file and over-broad globs attach
+the wrong stack's conventions.
+
+Edit the rule files. Do not restate their content here.

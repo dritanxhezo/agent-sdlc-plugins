@@ -1,73 +1,50 @@
 ---
-description: Code conventions applied to source written by the SDLC developer and debugger roles - naming, React and TypeScript practices, styling, backend structure and tooling.
+description: Code conventions that hold in any language - naming principles, structure, logging, linting and comment discipline. Indexes the per-stack conventions.
 alwaysApply: false
-globs: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "**/*.mjs", "**/*.css", "**/*.scss"]
+globs: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "**/*.mjs", "**/*.cjs", "**/*.cs", "**/*.py", "**/*.go", "**/*.rs", "**/*.java", "**/*.rb", "**/*.php", "**/*.kt", "**/*.swift"]
 ---
 
 # Code conventions
 
-This file is the single source of truth for how generated code is written. Cursor attaches
-it automatically; the `tdd-implement` and `defect-triage` skills point every other client
-at it.
+These hold whatever the language is. Anything specific to a stack lives in its own file, so
+that C# work never has React conventions attached to it:
+
+| Stack                              | File                                                         |
+| ---------------------------------- | ------------------------------------------------------------ |
+| TypeScript, React, Node, CSS       | [code-conventions-ts.mdc](code-conventions-ts.mdc)           |
+
+Cursor attaches the matching file by its globs. Claude Code and Copilot have no equivalent,
+so read this file plus the one for the stack you detected — and if the stack has no file
+yet, follow the conventions already present in the repository.
 
 ## Naming
 
-- **Components and classes**: PascalCase for React component names (`UserProfile.tsx`) and
-  class declarations.
-- **Variables, functions and hooks**: camelCase for variables, local functions and custom
-  hooks (`getUserData`, `useAuth`).
-- **Constants**: UPPER_SNAKE_CASE for global or compile-time immutable values
-  (`MAX_RETRY_LIMIT`). Named constants replace magic numbers and repeated literals.
-- **Interfaces**: names begin with `I`.
-- **Files and folders**: PascalCase for React component files; camelCase or kebab-case for
-  utilities, services and configuration. Use a feature-based structure, `common/` for
-  shared logic, application-wide configuration in `config/`, global constants and utils in
-  `constants/`.
+- Interface names begin with `I`.
+- Named constants replace magic numbers and repeated literals. Declare them at the
+  narrowest scope that serves every use.
+- Names say what the thing is, not what type it is or how it is implemented.
 
-## React and TypeScript
+## Structure
 
-- **Functional components**: pure arrow functions or declarations
-  (`const MyComponent: React.FC<IProps> = () => {}`).
-- **Method declarations**: `const` arrow functions rather than `function`, where the
-  language allows it.
-- **Props typing**: explicit interface or type alias per component's props. No implicit
-  `any`.
-- **Single responsibility**: keep components small, ideally under 150–200 lines. Split out
-  sub-components or move business logic into custom hooks.
-- **State**: type `useState` with generics when initialising with a union or an empty value
-  (`useState<IUser | null>(null)`).
-- **Logging**: use the project's utility loggers (`logDebug`, `logError`). No bare
-  `console.log` in shipped code.
-- **Shared components**: if the project has a shared UI component library, use it and
-  extend it rather than building a parallel component. If it has none, create one with a
-  Storybook to keep the main application simple.
+- Organise by feature rather than by layer, with shared logic in `common/`,
+  application-wide configuration in `config/`, and global constants in `constants/`.
+- Keep units small and single-purpose. When something grows past a single responsibility,
+  split it rather than adding a flag to it.
+- Extend existing shared code instead of building a parallel version. When a shared
+  component or helper nearly fits, add the missing capability there.
 
-## HTML, CSS and JS
+## Logging
 
-- Style with a classless CSS framework such as mvp.css, overriding defaults through CSS
-  variables, plus CSS modules for the rest. Prefer modern CSS, HTML and JS features that
-  simplify the markup.
-- Sort CSS properties concentrically via `prettier-plugin-css-order`.
+- Log through the project's own logger — `logDebug` for diagnostics, `logError` for
+  failures — so nothing noisy survives into production. Never write diagnostics straight to
+  stdout or stderr from shipped code.
 
-## Node.js and backend
+## Linting
 
-- **Layered architecture**: keep route handlers, business logic controllers and data access
-  services cleanly separated.
-- **Async**: prefer `async`/`await` over raw promises, with explicit `try`/`catch`.
-- **Environment validation**: validate environment variables strictly at startup with Zod
-  or Joi.
-- **Error handling**: centralised custom error classes plus global Express or Fastify
-  error-handling middleware.
+- Code must pass the linter and the type checker as written. Never disable, suppress,
+  reconfigure or bypass a rule to make a change pass. A rule that fires is information.
 
-## Tooling
-
-- Enable `"strict": true` in `tsconfig.json`.
-- Run ESLint with the TypeScript plugins alongside Prettier, and sort imports with
-  `eslint-plugin-simple-import-sort`.
-- Code must pass the linter as written. Never disable, suppress or bypass a rule to make a
-  change pass.
-
-## Writing style
+## Comments and clarity
 
 - Comments explain a constraint the code cannot express. They do not narrate what the next
   line does, or why a change was made.

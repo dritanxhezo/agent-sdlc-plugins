@@ -13,10 +13,17 @@ verify; `work-breakdown` and `execution-plan` plan and publish; `tdd-implement` 
 **Agents** (6) — `business-analyst`, `solution-architect`, `qa-engineer`,
 `project-manager`, `developer`, `debugger`.
 
-**Rules** (2) — the pipeline conventions, and `code-conventions.mdc`, the single source of
-truth for how generated code is written. Cursor attaches them automatically. The other two
-clients have no rules loader, so `tdd-implement`, `defect-triage`, `pr-flow` and the
-`developer` agent link to the conventions file and read it as part of their procedure.
+**Rules** (3) — the pipeline conventions, plus the code conventions, split into a
+language-agnostic `code-conventions.mdc` and a per-stack `code-conventions-ts.mdc`. Together
+they are the single source of truth for how generated code is written. Cursor attaches them
+by their globs, so C# work never gets React conventions. A vendored Copilot install converts
+them into path-scoped `.github/instructions/*.instructions.md`, which Copilot scopes the same
+way via `applyTo`. Claude Code has no equivalent, so `tdd-implement`, `defect-triage`,
+`pr-flow` and the `developer` agent link to the core file and read it as part of their
+procedure.
+
+Adding a stack is additive: a new `code-conventions-<stack>.mdc` with its own globs, listed
+in the core file's index.
 
 **Hooks** (Cursor and Claude Code) — session context loader, spec gate, TDD guard,
 task sync on commit and merge, credential scan.

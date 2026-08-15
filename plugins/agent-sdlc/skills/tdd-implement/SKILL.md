@@ -68,10 +68,10 @@ requirements, invent test cases, or start a second task before the first is merg
 
 ### Code conventions
 
-Read [../../rules/code-conventions.mdc](../../rules/code-conventions.mdc) before step 5 and
-apply it to every line you write. Cursor attaches that file on its own; in Claude Code and
-Copilot you have to open it. It is the only copy — nothing here restates it, so there is
-nothing to disagree with it.
+Read [../../rules/code-conventions.mdc](../../rules/code-conventions.mdc) before step 5, plus
+the per-stack file it indexes for the stack you detected in step 3. Cursor attaches both by
+their globs; in Claude Code and Copilot you have to open them. They are the only copy —
+nothing here restates them, so there is nothing to disagree with.
 
 ### TypeScript / React / Vitest / Playwright path
 
