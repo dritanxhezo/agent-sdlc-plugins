@@ -19,7 +19,6 @@ yet, follow the conventions already present in the repository.
 
 ## Naming
 
-- Interface names begin with `I`.
 - Named constants replace magic numbers and repeated literals. Declare them at the
   narrowest scope that serves every use.
 - Names say what the thing is, not what type it is or how it is implemented.

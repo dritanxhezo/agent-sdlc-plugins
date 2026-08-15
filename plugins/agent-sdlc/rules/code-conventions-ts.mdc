@@ -21,13 +21,13 @@ is not specific to this stack.
 ## React and TypeScript
 
 - **Functional components**: pure arrow functions or declarations
-  (`const MyComponent: React.FC<IProps> = () => {}`).
+  (`const MyComponent: React.FC<Props> = () => {}`).
 - **Method declarations**: `const` arrow functions rather than `function`.
 - **Props typing**: an explicit interface or type alias per component. No implicit `any`.
 - **Component size**: ideally under 150–200 lines. Split out sub-components or move business
   logic into custom hooks.
 - **State**: type `useState` with generics when initialising with a union or an empty value
-  (`useState<IUser | null>(null)`).
+  (`useState<User | null>(null)`).
 - **Logging**: the project's `logDebug` and `logError`, never bare `console.log` in shipped
   code.
 - **Shared components**: if the project has a shared UI component library, use and extend
