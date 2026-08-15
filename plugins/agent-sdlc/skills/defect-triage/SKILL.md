@@ -96,8 +96,10 @@ Write `docs/sdlc/<feature>/defects/DEF-###.md` from
 - Related `FR-###` and `TC-###`
 - Whether the same defect class appears elsewhere, and the tasks raised for it
 
-`DEF-###` numbering continues from the highest existing defect in the feature directory.
-Never reuse or renumber an ID.
+When a QA run report already allocated the `DEF-###`, keep that id — it is cited in the
+run's results table. Only when the defect arrives without one does numbering continue from
+the highest existing defect in the feature directory, counting ids already allocated in
+`test-runs/` as taken. Never reuse or renumber an ID.
 
 ## Handoff
 

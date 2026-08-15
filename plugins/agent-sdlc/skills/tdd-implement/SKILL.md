@@ -62,9 +62,9 @@ requirements, invent test cases, or start a second task before the first is merg
    ignore comments, no config edits, no `--no-verify`. A rule that fires is telling you
    the code is wrong.
 
-9. **Close the loop in the tracker.** Update the task with `task_update` to the status
-   the project's board uses for "ready for review", and record which `TC-###` cases now
-   pass. Do not hand-edit `execution-plan.md`.
+9. **Close the loop in the tracker.** Update the task with `task_update` to `In Review`,
+   and record which `TC-###` cases now pass. A board without that option falls back on
+   its own. Do not hand-edit `execution-plan.md`.
 
 ### Code conventions
 

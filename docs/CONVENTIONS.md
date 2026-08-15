@@ -45,6 +45,14 @@ existing ID; mark it superseded instead.
 | Task                  | `T-###`    | `T-045`  |
 | Defect                | `DEF-###`  | `DEF-006`|
 
+These ids are the join keys between artifacts, so they are the only ones another skill may
+cite. A template that needs to label something local to its own document — an actor, a user
+journey, a logical entity, a business or validation rule, an edge case, an architectural
+driver, an integration point — uses a short single-letter prefix (`A-1`, `J-1`, `E-1`,
+`BRU-1`, `VR-1`, `EC-1`, `D-1`, `X-1`). The different shape is deliberate: it signals the id
+is scoped to one document and carries no traceability guarantee. Acceptance criteria are
+numbered as children of their requirement (`AC-001.1`) so a test case can cite one directly.
+
 ## Traceability
 
 Every artifact carries a traceability table linking its own IDs back to the IDs it
@@ -70,6 +78,21 @@ Tasks live in **GitHub Issues**, with metadata in a **GitHub Projects v2** board
 
 All reads and writes go through the `sdlc-tracker` MCP server so that the markdown view
 and GitHub cannot drift. Do not call `gh issue edit` directly from a skill.
+
+### Task status vocabulary
+
+`Status` is the board's built-in field. Skills use exactly these four names:
+
+| Status        | Meaning                                                        |
+| ------------- | -------------------------------------------------------------- |
+| `Todo`        | Not started                                                     |
+| `In Progress` | Branch created or work committed                                |
+| `In Review`   | Pull request open, awaiting review or CI                        |
+| `Done`        | Merged; `task_update` also closes the issue                     |
+
+`task_update` accepts common synonyms and normalises them. A board that lacks one of these
+options falls back to the nearest coarser status rather than failing, so `In Review` may
+land as `In Progress` on a default board. Never invent a fifth status name.
 
 ### Tracker MCP tools
 
