@@ -362,6 +362,40 @@ const validateMcpServers = (pluginDir) => {
   }
 };
 
+/**
+ * Cursor reads MCP servers by two routes that disagree about the plugin-root token.
+ *
+ * The Agent Plugins route finds the root `mcp.json` on its own and expands
+ * `${PLUGIN_ROOT}`. The Cursor plugin route, through the file named by
+ * `.cursor-plugin/plugin.json`, interpolates only `${env:...}`, `${userHome}` and the
+ * workspace tokens: `${PLUGIN_ROOT}` survives verbatim and whatever remains is
+ * resolved against the user's home directory, so the server dies with
+ * `Cannot find module 'C:\Users\you\${PLUGIN_ROOT}\...'`.
+ *
+ * Anything needing the plugin's own path therefore has to arrive by the first route.
+ *
+ * @param {string} pluginDir
+ */
+const validateCursorMcpRoute = (pluginDir) => {
+  const manifestPath = join(pluginDir, '.cursor-plugin', 'plugin.json');
+  if (!existsSync(manifestPath)) return;
+
+  const reference = readJson(manifestPath)?.mcpServers;
+  if (typeof reference !== 'string') return;
+
+  const referenced = join(pluginDir, reference);
+  if (!existsSync(referenced)) return;
+
+  if (readFileSync(referenced, 'utf8').includes('${PLUGIN_ROOT}')) {
+    fail(
+      `${referenced}: uses \${PLUGIN_ROOT}, but .cursor-plugin/plugin.json points Cursor at it, ` +
+        `and Cursor does not expand that token on this route - the server fails with ` +
+        `"Cannot find module '<home>/\${PLUGIN_ROOT}/...'". Leave servers that need the plugin's ` +
+        `own path to the root mcp.json, which Cursor reads as an Agent Plugin and does expand.`,
+    );
+  }
+};
+
 const main = () => {
   validateMarketplaces();
   validateVersions();
@@ -378,6 +412,7 @@ const main = () => {
     validateRules(pluginDir);
     validateHooks(pluginDir);
     validateMcpServers(pluginDir);
+    validateCursorMcpRoute(pluginDir);
   }
 
   for (const message of warnings) process.stdout.write(`warning: ${message}\n`);

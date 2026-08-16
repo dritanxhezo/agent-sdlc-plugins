@@ -82,11 +82,13 @@ gates become advisory. That is why the installer writes them into
 
 ## Notes on Cursor
 
-The bundled `sdlc-tracker` names its script through `${PLUGIN_ROOT}` in `args`, which Cursor
-expands. It must never be named through `cwd`, which Cursor does not expand: the literal
-`${PLUGIN_ROOT}` becomes the working directory, and spawning into a directory that does not
-exist surfaces as `spawn node ENOENT` — an error that points at Node rather than at the real
-cause. The validator rejects `cwd` on any stdio server for that reason.
+The bundled `sdlc-tracker` reaches Cursor through the root `mcp.json`, which Cursor reads as
+an Agent Plugin and where it expands `${PLUGIN_ROOT}` in `args`. It must not arrive by the
+other route — the file named by `.cursor-plugin/plugin.json` — where that token is left
+verbatim and the path resolves against your home directory, nor be named through `cwd`,
+which is expanded on neither route and fails as `spawn node ENOENT`. That is why the Cursor
+manifest points at a file holding only the servers that name no path, and why the validator
+rejects both mistakes.
 
 See the [repository README](https://github.com/dritanxhezo/agent-sdlc-plugins) for
 installation and development.

@@ -19,6 +19,7 @@ const SOURCE_FILE = join(PLUGIN_DIR, 'mcp.source.json');
 
 const AGENT_PLUGINS_TARGET = join(PLUGIN_DIR, 'mcp.json');
 const CLAUDE_TARGET = join(PLUGIN_DIR, '.mcp.json');
+const CURSOR_TARGET = join(PLUGIN_DIR, '.cursor-plugin', 'mcp.json');
 
 const AGENT_PLUGINS_SCHEMA = 'https://agent-plugins.org/schemas/1.0.0/mcp.schema.json';
 const CURSOR_PLUGIN_ROOT = '${PLUGIN_ROOT}';
@@ -66,6 +67,19 @@ const main = () => {
   const source = JSON.parse(readFileSync(SOURCE_FILE, 'utf8'));
   const servers = source.servers ?? {};
 
+  // Cursor loads MCP servers by two independent routes, and they do not agree. The
+  // Agent Plugins route reads the root mcp.json and expands ${PLUGIN_ROOT}. The Cursor
+  // plugin route, through .cursor-plugin/plugin.json, does not: it interpolates only
+  // ${env:...}, ${userHome} and the workspace tokens, leaving ${PLUGIN_ROOT} literal
+  // and resolving what is left against the user's home directory.
+  //
+  // So anything needing the plugin's own path must reach Cursor by the first route
+  // only, and the file named by the Cursor manifest carries just the servers that name
+  // no path at all.
+  const pathlessServers = Object.fromEntries(
+    Object.entries(servers).filter(([, definition]) => !definition.pluginRelativeArgs),
+  );
+
   const outputs = [
     // No generated-notice key on the Agent Plugins document: its schema closes the
     // file to $schema and mcpServers, and a client enforcing that disables MCP for
@@ -79,6 +93,7 @@ const main = () => {
       path: CLAUDE_TARGET,
       body: serialise(buildConfig(toServer(CLAUDE_PLUGIN_ROOT), servers, { _generated: GENERATED_NOTICE })),
     },
+    { path: CURSOR_TARGET, body: serialise(buildConfig(toServer(CURSOR_PLUGIN_ROOT), pathlessServers)) },
   ];
 
   const isCheck = process.argv.includes('--check');

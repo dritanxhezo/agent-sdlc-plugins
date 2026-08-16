@@ -126,18 +126,25 @@ response keys; the logic behind them lives once in `hooks/lib/` with a thin adap
 client. Copilot's config sits at the plugin root as `hooks.json`, the one name neither of
 the other two auto-discovers.
 
-The plugin-root token resolves in all three clients, but only in the right field, and this
-is worth knowing if you write plugins of your own. Put it in `args`:
+Getting an MCP server that lives *inside* the plugin to start in Cursor took three
+attempts, so if you write plugins of your own, here is the whole of it.
 
-```json
-{ "command": "node", "args": ["${PLUGIN_ROOT}/mcp/sdlc-tracker/src/index.mjs"] }
-```
+Cursor loads MCP servers by two routes that disagree. The **Agent Plugins** route finds the
+root `mcp.json` by itself and expands `${PLUGIN_ROOT}`. The **Cursor plugin** route, through
+the file named by `.cursor-plugin/plugin.json`, interpolates only `${env:...}`,
+`${userHome}` and the workspace tokens — `${PLUGIN_ROOT}` survives verbatim, and whatever
+is left resolves against your home directory. Two failures come out of that, and neither
+error message points at the cause:
 
-Never in `cwd`. Cursor does not expand it there, and passes the literal `${PLUGIN_ROOT}`
-through as a working directory. Spawning into a directory that does not exist is reported
-as **`spawn node ENOENT`**, which reads as a missing Node installation and will send you
-looking at your PATH for as long as you believe it. `npm run validate` fails on any stdio
-server that sets `cwd`, so this cannot come back.
+| Where the token is | What Cursor reports |
+| ------------------ | ------------------- |
+| `cwd`, either route | `spawn node ENOENT` — reads as a missing Node, is a nonexistent working directory |
+| `args`, via the Cursor manifest | `Cannot find module 'C:\Users\you\${PLUGIN_ROOT}\...'` |
+
+So a server needing the plugin's own path goes in the root `mcp.json`, names its script
+through `${PLUGIN_ROOT}` in `args`, and sets no `cwd` — while the file the Cursor manifest
+points at carries only servers that name no path at all, like an `npx` or `http` one.
+`npm run validate` fails on both mistakes, so neither can come back quietly.
 
 ## Tasks live in GitHub
 

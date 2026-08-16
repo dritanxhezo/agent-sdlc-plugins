@@ -1,6 +1,6 @@
 {
   "name": "agent-sdlc-plugins",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "private": true,
   "description": "A marketplace of role-based SDLC agent plugins for Cursor, Claude Code and GitHub Copilot.",
   "type": "module",
