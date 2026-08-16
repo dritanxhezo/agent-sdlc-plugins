@@ -1,6 +1,6 @@
 {
   "name": "agent-sdlc",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "A full SDLC crew of agent roles that turn an idea into specs, designs, test cases, a tracked execution plan and TDD-built code.",
   "author": {
     "name": "Dritan Xhezo"
@@ -22,7 +22,7 @@
   "agents": "agents",
   "rules": "rules",
   "hooks": "hooks/cursor.json",
-  "mcpServers": ".cursor-plugin/mcp.json",
+  "mcpServers": "mcp.json",
   "variables": {
     "type": "object",
     "properties": {

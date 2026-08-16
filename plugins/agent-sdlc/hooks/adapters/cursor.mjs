@@ -14,18 +14,9 @@
 
 import { runAction, ACTIONS } from '../lib/core.mjs';
 import { readPayload, runAdapter, firstOf } from '../lib/io.mjs';
-import { loadConfig } from '../lib/config.mjs';
-import { registerTracker } from '../lib/cursormcp.mjs';
-import { logDebug } from '../lib/log.mjs';
 
 const FILE_PATH_KEYS = ['file_path', 'path', 'target_file', 'filePath'];
 const CONTENT_KEYS = ['contents', 'content', 'new_string', 'text'];
-
-/**
- * Cursor-only, so it lives here rather than in lib/core.mjs, which stays free of
- * anything client-specific.
- */
-const MCP_REGISTER = 'mcp-register';
 
 const ALLOW_RESPONSE = { permission: 'allow' };
 
@@ -87,48 +78,9 @@ const toCursorResponse = (action, decision) => {
   return decision.context ? { additional_context: decision.context } : {};
 };
 
-/**
- * Keeps the tracker's entry in the user's own MCP config pointing at this copy of
- * the plugin, and returns what the user needs to be told, if anything.
- *
- * Cursor does not reload `mcp.json` by itself, so a newly written entry only takes
- * effect on the next window reload. The session context is the only place that can
- * say so: `workspaceOpen` accepts no message back.
- *
- * @param {string} root Absolute workspace root, for the project's own config.
- * @returns {string}
- */
-const ensureTrackerRegistered = (root) => {
-  if (!loadConfig(root).registerCursorMcp) return '';
-
-  const result = registerTracker();
-  if (!result.changed) {
-    logDebug('tracker registration:', result.reason);
-    return '';
-  }
-
-  return (
-    `The \`sdlc-tracker\` MCP server was just registered in your Cursor MCP config ` +
-    `(${result.reason}). Cursor does not reload that file on its own, so run ` +
-    `"Developer: Reload Window" before using the tracker tools.`
-  );
-};
-
 await runAdapter(async () => {
   const action = process.argv[2] ?? '';
   const payload = await readPayload();
-
-  if (action === MCP_REGISTER) {
-    ensureTrackerRegistered(resolveRoot(payload));
-    return {};
-  }
-
-  const response = toCursorResponse(action, runAction(buildContext(action, payload)));
-  if (action !== ACTIONS.SESSION_CONTEXT) return response;
-
-  const notice = ensureTrackerRegistered(resolveRoot(payload));
-  if (!notice) return response;
-
-  const existing = response.additional_context;
-  return { additional_context: existing ? `${notice}\n\n${existing}` : notice };
+  const decision = runAction(buildContext(action, payload));
+  return toCursorResponse(action, decision);
 }, ALLOW_RESPONSE);

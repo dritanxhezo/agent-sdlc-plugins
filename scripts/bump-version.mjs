@@ -47,10 +47,13 @@ const main = () => {
   const expected = new Map();
   for (const site of sites) expected.set(site.file, (expected.get(site.file) ?? 0) + 1);
 
+  // Every file is prepared and checked before any of them is written. Writing as we
+  // went left the repository half-bumped whenever a later file disagreed, which is
+  // the exact state this script exists to prevent.
+  const planned = [];
   for (const [file, count] of expected) {
     const before = readFileSync(file, 'utf8');
     const pattern = new RegExp(`("version":\\s*)"${current.replace(/\./g, '\\.')}"`, 'g');
-    const after = before.replace(pattern, `$1"${next}"`);
 
     // A rewrite is preferred over re-serialising the parsed object, which would
     // reflow every array in the file and bury the one-line change in noise.
@@ -58,8 +61,10 @@ const main = () => {
     if (replaced !== count) {
       throw new Error(`${file}: expected ${count} version field(s) at ${current}, found ${replaced}`);
     }
-    writeFileSync(file, after);
+    planned.push({ file, body: before.replace(pattern, `$1"${next}"`) });
   }
+
+  for (const { file, body } of planned) writeFileSync(file, body);
 
   process.stdout.write(`${current} -> ${next} in ${expected.size} file(s), ${sites.length} field(s).\n`);
   process.stdout.write('Commit and push to the default branch, then colleagues run their client\'s update.\n');

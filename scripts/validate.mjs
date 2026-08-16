@@ -331,6 +331,37 @@ const validateVersions = () => {
   }
 };
 
+/**
+ * A stdio server must name its script through the plugin-root token in `args`, never
+ * through `cwd`.
+ *
+ * Cursor expands the token in `args` but not in `cwd`, where it passes the literal
+ * `${PLUGIN_ROOT}` through as a working directory. Spawning into a directory that does
+ * not exist is reported as `spawn node ENOENT`, which reads as a missing Node
+ * installation and sends you looking at PATH for as long as you believe it.
+ *
+ * @param {string} pluginDir
+ */
+const validateMcpServers = (pluginDir) => {
+  for (const file of ['mcp.json', '.mcp.json', 'mcp.source.json']) {
+    const path = join(pluginDir, file);
+    if (!existsSync(path)) continue;
+
+    const config = readJson(path);
+    const servers = config?.mcpServers ?? config?.servers;
+    if (!servers) continue;
+
+    for (const [name, server] of Object.entries(servers)) {
+      if (server?.cwd !== undefined) {
+        fail(
+          `${path}: "${name}" sets cwd, which Cursor does not expand the plugin-root token in - ` +
+            `it fails as "spawn node ENOENT". Put the token in args instead.`,
+        );
+      }
+    }
+  }
+};
+
 const main = () => {
   validateMarketplaces();
   validateVersions();
@@ -346,6 +377,7 @@ const main = () => {
     validateAgents(pluginDir);
     validateRules(pluginDir);
     validateHooks(pluginDir);
+    validateMcpServers(pluginDir);
   }
 
   for (const message of warnings) process.stdout.write(`warning: ${message}\n`);

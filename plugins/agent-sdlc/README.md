@@ -82,19 +82,11 @@ gates become advisory. That is why the installer writes them into
 
 ## Notes on Cursor
 
-Cursor cannot start an MCP server that lives inside a plugin: it expands no plugin-root
-placeholder in `mcp.json`, injects no plugin-root variable into the server process, and
-resolves a relative argument against your home directory. Its hooks are the exception, and
-they run from the plugin root — so the `workspaceOpen` hook writes an `sdlc-tracker` entry
-with the resolved absolute path into `~/.cursor/mcp.json`, and rewrites it after each plugin
-update, when the install path's commit sha changes.
-
-Cursor does not watch that file, so the tracker appears after the next **Developer: Reload
-Window**. The hook only ever rewrites an entry naming a copy under Cursor's own plugin
-directory, or one whose file has gone: an entry pointing at your working tree is somebody
-developing the plugin, and one pointing at another server is somebody's fork, so both are
-left alone — as is a file that does not parse. Set `registerCursorMcp: false` in
-`sdlc.config.json` to opt out entirely.
+The bundled `sdlc-tracker` names its script through `${PLUGIN_ROOT}` in `args`, which Cursor
+expands. It must never be named through `cwd`, which Cursor does not expand: the literal
+`${PLUGIN_ROOT}` becomes the working directory, and spawning into a directory that does not
+exist surfaces as `spawn node ENOENT` — an error that points at Node rather than at the real
+cause. The validator rejects `cwd` on any stdio server for that reason.
 
 See the [repository README](https://github.com/dritanxhezo/agent-sdlc-plugins) for
 installation and development.

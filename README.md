@@ -126,27 +126,18 @@ response keys; the logic behind them lives once in `hooks/lib/` with a thin adap
 client. Copilot's config sits at the plugin root as `hooks.json`, the one name neither of
 the other two auto-discovers.
 
-The plugin-root token resolves in two clients out of three. Copilot injects `PLUGIN_ROOT`
-and `COPILOT_PLUGIN_ROOT` into every plugin process and Claude Code expands
-`${CLAUDE_PLUGIN_ROOT}`, so both start the bundled `sdlc-tracker` from the plugin
-directory.
+The plugin-root token resolves in all three clients, but only in the right field, and this
+is worth knowing if you write plugins of your own. Put it in `args`:
 
-Cursor does not, and this is worth knowing if you write plugins of your own. It expands no
-placeholder in `mcp.json`, injects no plugin-root variable into the server process, and
-resolves a relative argument against your home directory — so nothing a marketplace
-install can write about itself will name a file inside itself. Its hooks are the
-exception, running from the plugin root, so a `workspaceOpen` hook writes an `sdlc-tracker`
-entry with the resolved absolute path into `~/.cursor/mcp.json` and rewrites it after each
-plugin update. Two consequences to be aware of:
+```json
+{ "command": "node", "args": ["${PLUGIN_ROOT}/mcp/sdlc-tracker/src/index.mjs"] }
+```
 
-- Cursor does not reload `mcp.json` on its own, so the tracker appears after the next
-  **Developer: Reload Window**. On a first install, that is one reload.
-- Only an entry naming a copy inside Cursor's plugin directory is ever rewritten. Point it
-  at a checkout of your own and it is left alone, as is a `sdlc-tracker` pointing at a
-  different server altogether. `registerCursorMcp: false` in `sdlc.config.json` opts out.
-
-For that reason the Cursor manifest lists only the servers it can actually launch, so
-Cursor never shows an entry that cannot start.
+Never in `cwd`. Cursor does not expand it there, and passes the literal `${PLUGIN_ROOT}`
+through as a working directory. Spawning into a directory that does not exist is reported
+as **`spawn node ENOENT`**, which reads as a missing Node installation and will send you
+looking at your PATH for as long as you believe it. `npm run validate` fails on any stdio
+server that sets `cwd`, so this cannot come back.
 
 ## Tasks live in GitHub
 
