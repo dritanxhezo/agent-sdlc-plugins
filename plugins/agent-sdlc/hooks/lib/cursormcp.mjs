@@ -37,21 +37,33 @@ const defaultConfigPath = () => join(homedir(), '.cursor', 'mcp.json');
  * @property {string} [serverPath]
  */
 
+/** Cursor's own plugin directory, the only place an entry is ours to rewrite. */
+const MANAGED_DIRECTORY = '/.cursor/plugins/';
+
 /**
- * An entry counts as ours when it points at this plugin's server script, wherever
- * that copy happens to live. That is what makes an update self-healing: the install
- * path carries a commit sha, so every plugin update leaves the old entry stale.
+ * Whether an existing entry is one this hook may replace.
  *
- * A `sdlc-tracker` entry pointing at anything else is somebody's deliberate
- * override, and overwriting it would be the rudest possible way to fix a path.
+ * Two things have to be true. It has to name this plugin's server script, so that a
+ * `sdlc-tracker` pointing at somebody's own fork is left alone. And it has to be a
+ * copy Cursor manages, or one that no longer exists on disk: an install path carries
+ * a commit sha, so every plugin update leaves the previous entry stale, and rewriting
+ * it is the whole point.
+ *
+ * A path outside Cursor's plugin directory is somebody working on the plugin itself,
+ * pointing at their checkout deliberately. That path has no sha in it and so never
+ * goes stale, which makes overwriting it purely destructive.
  *
  * @param {unknown} entry
  * @returns {boolean}
  */
-const isOurs = (entry) => {
+const isReplaceable = (entry) => {
   const args = /** @type {{ args?: unknown }} */ (entry)?.args;
   if (!Array.isArray(args)) return false;
-  return args.some((arg) => typeof arg === 'string' && toPosix(arg).endsWith(SERVER_RELATIVE_PATH));
+
+  const script = args.find((arg) => typeof arg === 'string' && toPosix(arg).endsWith(SERVER_RELATIVE_PATH));
+  if (script === undefined) return false;
+
+  return toPosix(script).includes(MANAGED_DIRECTORY) || !existsSync(script);
 };
 
 /**
@@ -85,14 +97,17 @@ export const registerTracker = (options = {}) => {
   const servers = typeof config.mcpServers === 'object' && config.mcpServers !== null ? config.mcpServers : {};
   const existing = /** @type {Record<string, unknown>} */ (servers)[SERVER_NAME];
 
-  if (existing !== undefined && !isOurs(existing)) {
-    return { changed: false, reason: `${configPath} already defines a different ${SERVER_NAME}, so it was left alone` };
-  }
-
   const wanted = { type: 'stdio', command: 'node', args: [serverPath] };
   if (existing !== undefined && JSON.stringify(existing) === JSON.stringify(wanted)) {
     logDebug(`${SERVER_NAME} already registered at ${serverPath}`);
     return { changed: false, reason: 'already registered' };
+  }
+
+  if (existing !== undefined && !isReplaceable(existing)) {
+    return {
+      changed: false,
+      reason: `${configPath} points ${SERVER_NAME} at a copy this hook does not manage, so it was left alone`,
+    };
   }
 
   const updated = { ...config, mcpServers: { ...servers, [SERVER_NAME]: wanted } };

@@ -141,8 +141,9 @@ plugin update. Two consequences to be aware of:
 
 - Cursor does not reload `mcp.json` on its own, so the tracker appears after the next
   **Developer: Reload Window**. On a first install, that is one reload.
-- The entry is yours once written. Set `registerCursorMcp: false` in `sdlc.config.json` to
-  manage it yourself, and the plugin will not touch it.
+- Only an entry naming a copy inside Cursor's plugin directory is ever rewritten. Point it
+  at a checkout of your own and it is left alone, as is a `sdlc-tracker` pointing at a
+  different server altogether. `registerCursorMcp: false` in `sdlc.config.json` opts out.
 
 For that reason the Cursor manifest lists only the servers it can actually launch, so
 Cursor never shows an entry that cannot start.

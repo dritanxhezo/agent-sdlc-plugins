@@ -61,6 +61,7 @@ test('other servers and other top-level keys survive the merge', () => {
       mcpServers: { github: { type: 'http', url: 'https://example.test/mcp' } },
       someOtherSetting: { keep: true },
     }),
+    'utf8',
   );
 
   register();
@@ -79,25 +80,58 @@ test('running twice writes once', () => {
   assert.equal(second.reason, 'already registered');
 });
 
-test('a stale path from a previous plugin version is rewritten', () => {
-  const stale = `C:/Users/someone/.cursor/plugins/cache/x/agent-sdlc/0000000/${SERVER_RELATIVE_PATH}`;
+/** @param {object} entry */
+const seedEntry = (entry) => {
   mkdirSync(dirname(configPath), { recursive: true });
-  writeFileSync(configPath, JSON.stringify({ mcpServers: { [SERVER_NAME]: { command: 'node', args: [stale] } } }));
+  writeFileSync(configPath, JSON.stringify({ mcpServers: { [SERVER_NAME]: entry } }));
+};
+
+test('a stale path from a previous plugin version is rewritten', () => {
+  seedEntry({
+    command: 'node',
+    args: [`C:/Users/someone/.cursor/plugins/cache/x/agent-sdlc/0000000/${SERVER_RELATIVE_PATH}`],
+  });
 
   assert.equal(register().changed, true);
   assert.equal(read().mcpServers[SERVER_NAME].args[0], REAL_SERVER.replaceAll('\\', '/'));
 });
 
-test('an entry pointing somewhere else is somebody\'s override, and is left alone', () => {
+test('an entry pointing at somebody\'s own fork is left alone', () => {
   const theirs = { command: 'node', args: ['/opt/my-own-fork/server.mjs'] };
-  mkdirSync(dirname(configPath), { recursive: true });
-  writeFileSync(configPath, JSON.stringify({ mcpServers: { [SERVER_NAME]: theirs } }));
+  seedEntry(theirs);
 
   const result = register();
 
   assert.equal(result.changed, false);
-  assert.match(result.reason, /already defines a different/);
+  assert.match(result.reason, /does not manage/);
   assert.deepEqual(read().mcpServers[SERVER_NAME], theirs);
+});
+
+test('a working-tree checkout of this plugin is deliberate, and is left alone', () => {
+  // The entry points at a checkout: it exists, and it sits outside Cursor's plugin
+  // directory. It carries no sha and so never goes stale, which is what separates it
+  // from the stale case above. Registering runs as the installed copy would.
+  const theirs = { command: 'node', args: [REAL_SERVER.replaceAll('\\', '/')] };
+  seedEntry(theirs);
+
+  const installed = join(workspace, '.cursor', 'plugins', 'cache', 'agent-sdlc', 'abc1234', SERVER_RELATIVE_PATH);
+  mkdirSync(dirname(installed), { recursive: true });
+  writeFileSync(installed, '// a real file, so the existence check is not what decides this test\n', 'utf8');
+
+  const result = register({ serverPath: installed });
+
+  assert.equal(result.changed, false, 'a developer checkout must not be overwritten by an installed copy');
+  assert.match(result.reason, /does not manage/);
+  assert.deepEqual(read().mcpServers[SERVER_NAME], theirs);
+});
+
+test('an entry naming a path that no longer exists is rewritten', () => {
+  seedEntry({ command: 'node', args: [join(workspace, 'deleted-checkout', SERVER_RELATIVE_PATH)] });
+
+  const result = register();
+
+  assert.equal(result.changed, true, result.reason);
+  assert.equal(read().mcpServers[SERVER_NAME].args[0], REAL_SERVER.replaceAll('\\', '/'));
 });
 
 test('a config that is not valid JSON is reported, never overwritten', () => {

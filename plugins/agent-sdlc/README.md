@@ -90,9 +90,11 @@ with the resolved absolute path into `~/.cursor/mcp.json`, and rewrites it after
 update, when the install path's commit sha changes.
 
 Cursor does not watch that file, so the tracker appears after the next **Developer: Reload
-Window**. An entry pointing anywhere other than this plugin's own server is treated as a
-deliberate override and left alone, as is a file that does not parse. Set
-`registerCursorMcp: false` in `sdlc.config.json` to opt out entirely.
+Window**. The hook only ever rewrites an entry naming a copy under Cursor's own plugin
+directory, or one whose file has gone: an entry pointing at your working tree is somebody
+developing the plugin, and one pointing at another server is somebody's fork, so both are
+left alone — as is a file that does not parse. Set `registerCursorMcp: false` in
+`sdlc.config.json` to opt out entirely.
 
 See the [repository README](https://github.com/dritanxhezo/agent-sdlc-plugins) for
 installation and development.
