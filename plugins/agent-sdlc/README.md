@@ -5,10 +5,12 @@ test-driven development and debugging.
 
 ## Components
 
-**Skills** (12) — `sdlc-orchestrator` routes work; `brd-author` and `frd-author` capture
+**Skills** (13) — `sdlc-orchestrator` routes work; `brd-author` and `frd-author` capture
 requirements; `hld-author` and `lld-author` design; `test-case-author` and `test-executor`
 verify; `work-breakdown` and `execution-plan` plan and publish; `tdd-implement` and
-`pr-flow` build and merge; `defect-triage` diagnoses.
+`pr-flow` build and merge; `defect-triage` diagnoses. `decision-interview` is the shared one:
+the four decision-dense skills run it before drafting, so the artifact records what you chose
+rather than what the agent guessed.
 
 **Agents** (6) — `business-analyst`, `solution-architect`, `qa-engineer`,
 `project-manager`, `developer`, `debugger`.

@@ -29,44 +29,51 @@ layouts — that is the LLD.
    forces the design must answer — throughput, latency, data volume, security boundary,
    uptime target, accessibility. Drivers, not preferences, justify structure.
 
-2. **Inventory the components** as `C-###`. Each gets a single responsibility stated in
+2. **Interview on the choices, not the boxes.** Run the `decision-interview` skill over what
+   is genuinely open: the technology choices, the integration approach, the deployment
+   model, and any driver the NFRs imply without stating. Component boundaries are normally
+   yours to decide — put a decomposition to the user only when two defensible ones carry
+   different costs they should be choosing between. Read the codebase first: its current
+   architecture is a fact, and a question about it is a question wasted.
+
+3. **Inventory the components** as `C-###`. Each gets a single responsibility stated in
    one sentence and an explicit list of the data it owns. Two components owning the same
    data is a design fault; resolve it before continuing.
 
-3. **Define the interactions.** For each component pair that communicates, state the
+4. **Define the interactions.** For each component pair that communicates, state the
    direction, the trigger, the synchronicity and the payload at a conceptual level. Draw
    it as a Mermaid `graph TD` (or `C4Context` where the external boundary matters most).
 
-4. **Record technology choices with their alternatives.** For every choice, name at least
+5. **Record technology choices with their alternatives.** For every choice, name at least
    one alternative considered and why it was rejected. A choice with no rejected
    alternative was not a decision.
 
-5. **Raise ADRs for the expensive ones.** Any choice that is irreversible or costly to
+6. **Raise ADRs for the expensive ones.** Any choice that is irreversible or costly to
    reverse — persistence engine, protocol, hosting model, auth provider, framework —
    becomes `docs/sdlc/<feature>/adr/NNNN-<slug>.md` from
    [`references/adr-template.md`](references/adr-template.md), numbered `ADR-####`. The
-   HLD then links to the ADR instead of restating the argument. Per the soft gate rules,
-   flag the irreversible ones to the user.
+   HLD then links to the ADR instead of restating the argument. These are the choices that
+   earn a question in step 2: an irreversible decision is never left to an assumption.
 
-6. **Map integration points and external dependencies.** For each: protocol, direction,
+7. **Map integration points and external dependencies.** For each: protocol, direction,
    authentication method, failure mode and what the system does when it is unavailable.
 
-7. **Trace the data flow** for each significant journey in the FRD — where data enters,
+8. **Trace the data flow** for each significant journey in the FRD — where data enters,
    which components transform it, where it comes to rest, and what leaves the trust
    boundary.
 
-8. **Decide the cross-cutting concerns** once, centrally: authentication and
+9. **Decide the cross-cutting concerns** once, centrally: authentication and
    authorisation, logging, error handling and propagation, configuration and secrets,
    observability. Each gets a named owning component so no component invents its own.
 
-9. **Describe the deployment topology.** Runtime units, where each runs, how they scale,
-   and what state is held where.
+10. **Describe the deployment topology.** Runtime units, where each runs, how they scale,
+    and what state is held where.
 
-10. **Satisfy the NFRs explicitly.** For each significant `NFR-###`, name the specific
+11. **Satisfy the NFRs explicitly.** For each significant `NFR-###`, name the specific
     design element that delivers it and how it will be verified. An NFR with no design
     element behind it is unmet, not implied.
 
-11. **Build the traceability table** from each `C-###` to the `FR-###` and `NFR-###` it
+12. **Build the traceability table** from each `C-###` to the `FR-###` and `NFR-###` it
     serves. A component serving nothing is unnecessary; an FR served by nothing is a gap.
 
 ## Output contract
@@ -91,8 +98,8 @@ Plus one `docs/sdlc/<feature>/adr/NNNN-<slug>.md` per expensive-to-reverse decis
 
 ## Handoff
 
-Report the component count, every ADR raised, every irreversible decision needing user
-confirmation, and any FR or NFR no component covers.
+Report the component count, every ADR raised, whether each irreversible decision was
+confirmed by the user or is still awaiting them, and any FR or NFR no component covers.
 
 Next: the **architect** continues with the `lld-author` skill to take each `C-###` down to
 implementation-ready detail. With Spec Kit present, the HLD together with the LLD is what

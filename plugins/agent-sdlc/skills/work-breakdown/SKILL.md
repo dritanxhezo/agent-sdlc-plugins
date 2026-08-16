@@ -28,7 +28,14 @@ design, and you do not implement.
    Consume it: map its entries to `T-###`, add estimates, dependencies, phases and
    traceability, and write the result. Never invent a parallel list of tasks alongside it.
 
-2. **Group work into phases in this order:**
+2. **Interview on order, not on tasks.** What the work is follows from the LLD and the test
+   cases. What order it lands in does not, and neither does what may slip. Run the
+   `decision-interview` skill over exactly that: which stories ship first, what can wait for
+   hardening, whether anything is pinned to an external date, and how many people can work
+   in parallel. Never put task-level detail to the user — it is derivable, and asking turns
+   the plan into their homework.
+
+3. **Group work into phases in this order:**
 
    | Phase | Contains |
    | ----- | -------- |
@@ -40,35 +47,35 @@ design, and you do not implement.
    A phase exists to be finishable. If a phase cannot be demonstrated when it closes, it is
    the wrong cut.
 
-3. **Write each `T-###` around an observable outcome.** The description says what is true
+4. **Write each `T-###` around an observable outcome.** The description says what is true
    after the task that was not true before — "the orders endpoint returns paginated
    results", not "work on pagination". Give each task its `FR-###` and `C-###`
    traceability; a task tracing to neither is scope creep, so surface it.
 
-4. **Pair every implementation task with its tests.** Either create the matching test task
+5. **Pair every implementation task with its tests.** Either create the matching test task
    referencing its `TC-###`s, or put "write failing test first" explicitly in the
    implementation task's definition of done. No implementation task ships without one of
    the two.
 
-5. **Estimate in ideal hours against a named reference task.** Pick one small, well
+6. **Estimate in ideal hours against a named reference task.** Pick one small, well
    understood task in this breakdown, state it as the reference, and size everything
    relative to it. Then:
    - Over 8 hours: flag `NEEDS SPLIT` and split it before publishing.
    - An order-of-magnitude guess: escalate to the user rather than writing a number. The
      conventions make this a gate, not an assumption.
 
-6. **Declare dependencies explicitly.** `Depends On` lists task IDs, never prose. A task
+7. **Declare dependencies explicitly.** `Depends On` lists task IDs, never prose. A task
    with no dependency inside its phase is parallelisable — mark it, because that is what
    tells the team what can run at once.
 
-7. **Give each task a definition of done** that a reviewer can check: tests passing, the
+8. **Give each task a definition of done** that a reviewer can check: tests passing, the
    named `TC-###`s green, the constitution's review policy satisfied.
 
-8. **Compute the critical path.** The longest dependency chain by summed estimate. Report
+9. **Compute the critical path.** The longest dependency chain by summed estimate. Report
    it with its total, because it, not the sum of all estimates, is the delivery date.
 
-9. **Sanity-check the whole breakdown.** Every `FR-###` has at least one task. Every task
-   has an estimate, a dependency list and a definition of done. No cycles.
+10. **Sanity-check the whole breakdown.** Every `FR-###` has at least one task. Every task
+    has an estimate, a dependency list and a definition of done. No cycles.
 
 ## Output contract
 

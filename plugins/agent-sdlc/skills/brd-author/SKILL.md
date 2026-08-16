@@ -26,32 +26,41 @@ not describe screens, APIs, data models or technology.
    user described a solution ("add a dropdown to filter orders"), work backwards to the
    problem it serves ("users cannot find recent orders quickly") and confirm it.
 
-2. **Identify stakeholders.** For each, capture their role, what they need from the
+2. **Interview before drafting.** Run the `decision-interview` skill over the decisions this
+   document will commit to: who the feature is for, what counts as success, and above all
+   where the scope boundary falls. Draft nothing while a round is outstanding — a BRD
+   written first and corrected afterwards anchors the user to your invention instead of
+   surfacing theirs.
+
+3. **Identify stakeholders.** For each, capture their role, what they need from the
    feature, and how success looks from their seat. Distinguish the person who *decides*
    from the people who are *affected*.
 
-3. **Write the business goals.** Each goal must be an outcome, not an activity, and each
+4. **Write the business goals.** Each goal must be an outcome, not an activity, and each
    must have a measurable success metric with a baseline and a target. A goal without a
    metric is an `OPEN QUESTION:`, not a goal.
 
-4. **Draw the scope boundary.** List what is in scope, and — more importantly — what is
+5. **Draw the scope boundary.** List what is in scope, and — more importantly — what is
    explicitly out of scope for this iteration. Out-of-scope items are the cheapest defect
    prevention available.
 
-5. **Number the business requirements** as `BR-###`. Each one is a single testable
+6. **Number the business requirements** as `BR-###`. Each one is a single testable
    business capability, written as "The business needs X so that Y." Assign each a
    priority (`MUST` / `SHOULD` / `COULD`) and name the stakeholder who owns it.
 
-6. **Record constraints and risks.** Regulatory, budget, timeline, dependency on other
+7. **Record constraints and risks.** Regulatory, budget, timeline, dependency on other
    teams. For each risk note its impact and whether it is accepted or needs mitigation.
 
-7. **Interrogate your own draft.** For every requirement ask: can a reviewer tell whether
+8. **Interrogate your own draft.** For every requirement ask: can a reviewer tell whether
    this was met? Can it be traced to a stated goal? If not, fix it or mark it
    `OPEN QUESTION:`.
 
-8. **Escalate real ambiguity.** Ask the user when a business goal has no measurable
-   outcome, when two stakeholders' needs conflict, or when the requested scope contradicts
-   the constitution. Record everything else as `ASSUMPTION:` and continue.
+9. **Record what the interview left open.** Anything unsettled takes its recommended answer
+   as `ASSUMPTION:`, with the recommendation stated so a reviewer can overrule it. The
+   exceptions stay `OPEN QUESTION:` and go in the handoff: two stakeholders whose needs
+   conflict, a business goal with no measurable outcome, scope that contradicts the
+   constitution. A decision the user confirmed is written as fact, never repeated as an
+   assumption.
 
 ## Output contract
 
@@ -73,7 +82,8 @@ technology, framework, screen or database.
 
 ## Handoff
 
-Report the requirement count, the MUST/SHOULD/COULD split and every open question.
+Report the requirement count, the MUST/SHOULD/COULD split, and how many decisions the
+interview settled versus how many are riding on an assumption.
 
 Next: the **business-analyst** continues with the `frd-author` skill to turn each `BR-###`
 into functional requirements. With Spec Kit present, the BRD is the input you pass to

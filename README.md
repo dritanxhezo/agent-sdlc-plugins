@@ -74,6 +74,35 @@ Ask for the outcome and let the orchestrator route:
 It resolves a feature slug, writes the constitution if missing, and walks the roles in
 order. Or drive a single role directly: "write the BRD for …", "break this down into tasks".
 
+## Questions before drafting
+
+A one-sentence request does not contain a BRD, so the difference between a useful artifact
+and a plausible one is whether the agent asked or invented. Before drafting, `brd-author`,
+`hld-author`, `lld-author` and `work-breakdown` run a shared `decision-interview` skill that
+puts the open decisions to you in rounds:
+
+```
+**Q1 — Who can search**
+
+Support staff only, or customers too? Customer-facing search puts authentication and
+rate limiting into the FRD and roughly doubles the test surface.
+
+**Recommend:** support staff only, customers explicitly out of scope this iteration.
+```
+
+Three properties make that cheap to answer. Every question carries a **recommendation**, so
+"1 yes, 2 the second one" is a complete reply and silence is a defensible default. Questions
+arrive **in dependency order** — nothing asks which cache to use before it is settled that
+anything is cached — and a whole round arrives at once rather than interrupting you six
+times. And **facts are never your job**: anything discoverable in the repo, the constitution
+or an upstream artifact gets looked up, not asked.
+
+The interview is bounded, because the pipeline uses soft gates. After the round budget is
+spent, each unsettled decision takes its recommended answer and is written into the
+artifact's Assumptions section with the reasoning attached, where a reviewer can overrule it.
+Set `interview.rounds` in `sdlc.config.json` to change the budget, or `0` to skip asking
+entirely and run unattended.
+
 ## What is portable and what is not
 
 All three tools install this repository as a plugin from a marketplace manifest, and all
@@ -166,7 +195,7 @@ plugins/agent-sdlc/
 ├── .cursor-plugin/plugin.json      Cursor manifest: adds rules and hooks
 ├── .claude-plugin/plugin.json      Claude Code manifest
 ├── hooks.json                      Copilot hook config, at the root where it looks
-├── skills/                         12 role skills with artifact templates
+├── skills/                         13 skills with artifact templates
 ├── agents/                         6 subagent definitions
 ├── rules/                          Cursor rules
 ├── hooks/{lib,adapters}/           Shared hook logic, per-client adapters

@@ -12,7 +12,7 @@
       "name": "agent-sdlc",
       "source": "./plugins/agent-sdlc",
       "description": "A full SDLC crew of agent roles that turn an idea into specs, designs, test cases, a tracked execution plan and TDD-built code.",
-      "version": "0.3.1",
+      "version": "0.4.0",
       "author": {
         "name": "Dritan Xhezo"
       },

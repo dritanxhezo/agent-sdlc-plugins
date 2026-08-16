@@ -1,6 +1,6 @@
 {
   "name": "agent-sdlc-plugins",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "private": true,
   "description": "A marketplace of role-based SDLC agent plugins for Cursor, Claude Code and GitHub Copilot.",
   "type": "module",
@@ -13,6 +13,7 @@
     "test": "node scripts/test.mjs",
     "smoke": "node scripts/smoke.mjs",
     "check": "npm run validate && npm test && npm run smoke",
+    "bump": "node scripts/bump-version.mjs",
     "install:copilot": "node plugins/agent-sdlc/bin/install.mjs --tool copilot",
     "install:cursor": "node plugins/agent-sdlc/bin/install.mjs --tool cursor",
     "install:claude": "node plugins/agent-sdlc/bin/install.mjs --tool claude"

@@ -1,7 +1,7 @@
 # Authoring conventions
 
 Every skill, agent and hook in this plugin follows the contracts below. They exist so
-that twelve independently-written skills behave like one pipeline.
+that thirteen independently-written skills behave like one pipeline.
 
 ## Artifact locations
 
@@ -120,6 +120,23 @@ Escalate to the user — do not guess — when any of these is true:
 - Scope grew beyond what the approved upstream artifact described.
 
 Otherwise: record the assumption in the artifact's **Assumptions** section and keep going.
+
+### Asking the user
+
+One skill owns how a question is asked: `decision-interview`. It defines the question format
+(numbered, titled, with a recommended answer), the dependency ordering that decides which
+questions can be asked in this round, the rule that facts are the agent's to find and never
+the user's to supply, and the round budget after which unsettled decisions become recorded
+assumptions.
+
+The decision-dense skills — `brd-author`, `hld-author`, `lld-author`, `work-breakdown` — run
+it before drafting. `frd-author` borrows only its format for the batch it escalates. The
+skills downstream of design do not use it at all: there, a question for the user means an
+upstream artifact is defective, and the contract is to report it against the `FR-###` or
+`C-###` rather than interview around it.
+
+Do not restate the format in a skill. A second copy of a question template is the same
+drift problem as a second copy of the conventions.
 
 ## Skill file contract
 

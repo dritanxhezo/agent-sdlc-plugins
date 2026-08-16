@@ -58,9 +58,16 @@ frameworks, schemas or algorithms — that is the architect's job.
    directions: a `BR-###` with no FR is a **coverage gap**, an `FR-###` with no BR is
    **scope creep**. Report both explicitly rather than quietly resolving them.
 
-10. **Escalate real ambiguity.** Ask the user when two requirements conflict, when a
-    business requirement cannot be made testable, or when closing a coverage gap would
-    grow scope. Record everything else as `ASSUMPTION:` and continue.
+10. **Escalate in one batch, not a drip.** Three things need the user: two requirements that
+    conflict, a business requirement that cannot be made testable, and a coverage gap that
+    can only be closed by growing scope. Collect them all and ask once, in the question
+    format the [`decision-interview`](../decision-interview/SKILL.md) skill defines —
+    numbered, titled, each carrying a recommended answer, so a one-word reply is enough.
+    Anything else takes its recommendation and is recorded as `ASSUMPTION:`.
+
+    Never spend a question on something the BRD, the constitution or the codebase already
+    answers. Most of an FRD is derivation, so a full interview is usually overkill here;
+    the format is what matters, not the rounds.
 
 ## Output contract
 

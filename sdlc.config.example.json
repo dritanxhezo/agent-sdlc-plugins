@@ -9,6 +9,12 @@
 
   "_gates": "Each gate is off, warn or block. warn allows the edit and injects a reminder for the agent; block refuses the edit and tells the agent what to do instead. secrets defaults to block because a leaked credential is not a workflow preference.",
 
+  "interview": {
+    "rounds": 3
+  },
+
+  "_interview": "How many rounds of questions the decision-interview skill may ask before it stops. Set 0 to skip interviewing entirely, in which case every recommended answer becomes a recorded assumption and the pipeline runs unattended. Read by the skills, not by the hooks.",
+
   "docsRoot": "docs/sdlc",
   "sourceDirs": ["src", "lib", "app", "server", "packages"],
   "ignorePatterns": ["node_modules", "dist", "build", "coverage", ".git"],
