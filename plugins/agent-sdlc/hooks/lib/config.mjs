@@ -14,6 +14,7 @@
  * @property {string[]} sourceDirs
  * @property {string[]} ignorePatterns
  * @property {boolean} sessionContext
+ * @property {boolean} registerCursorMcp Keep the tracker's entry in Cursor's own MCP config.
  */
 
 import { readFileSync } from 'node:fs';
@@ -33,6 +34,7 @@ const DEFAULT_CONFIG = {
   sourceDirs: ['src', 'lib', 'app', 'server', 'packages'],
   ignorePatterns: ['node_modules', 'dist', 'build', 'coverage', '.git'],
   sessionContext: true,
+  registerCursorMcp: true,
 };
 
 /**

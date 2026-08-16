@@ -126,9 +126,26 @@ response keys; the logic behind them lives once in `hooks/lib/` with a thin adap
 client. Copilot's config sits at the plugin root as `hooks.json`, the one name neither of
 the other two auto-discovers.
 
-The plugin-root token is a non-issue in practice: Copilot injects `PLUGIN_ROOT`,
-`CLAUDE_PLUGIN_ROOT` and `COPILOT_PLUGIN_ROOT` into every plugin process, so both MCP
-variants resolve.
+The plugin-root token resolves in two clients out of three. Copilot injects `PLUGIN_ROOT`
+and `COPILOT_PLUGIN_ROOT` into every plugin process and Claude Code expands
+`${CLAUDE_PLUGIN_ROOT}`, so both start the bundled `sdlc-tracker` from the plugin
+directory.
+
+Cursor does not, and this is worth knowing if you write plugins of your own. It expands no
+placeholder in `mcp.json`, injects no plugin-root variable into the server process, and
+resolves a relative argument against your home directory — so nothing a marketplace
+install can write about itself will name a file inside itself. Its hooks are the
+exception, running from the plugin root, so a `workspaceOpen` hook writes an `sdlc-tracker`
+entry with the resolved absolute path into `~/.cursor/mcp.json` and rewrites it after each
+plugin update. Two consequences to be aware of:
+
+- Cursor does not reload `mcp.json` on its own, so the tracker appears after the next
+  **Developer: Reload Window**. On a first install, that is one reload.
+- The entry is yours once written. Set `registerCursorMcp: false` in `sdlc.config.json` to
+  manage it yourself, and the plugin will not touch it.
+
+For that reason the Cursor manifest lists only the servers it can actually launch, so
+Cursor never shows an entry that cannot start.
 
 ## Tasks live in GitHub
 
@@ -242,7 +259,7 @@ to the commit it had when added.
 ## Development
 
 ```bash
-npm run build      # regenerate mcp.json and .mcp.json from mcp.source.json
+npm run build      # regenerate the three per-client MCP configs from mcp.source.json
 npm run validate   # check every manifest, skill, agent, rule and hook
 npm test           # unit tests
 npm run smoke      # MCP handshake and hook adapter integration

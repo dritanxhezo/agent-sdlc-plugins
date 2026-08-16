@@ -20,5 +20,9 @@
   "ignorePatterns": ["node_modules", "dist", "build", "coverage", ".git"],
   "sessionContext": true,
 
-  "_sessionContext": "When true, each new session is given the constitution, the active features and their phases, and the active gates."
+  "_sessionContext": "When true, each new session is given the constitution, the active features and their phases, and the active gates.",
+
+  "registerCursorMcp": true,
+
+  "_registerCursorMcp": "Cursor cannot start an MCP server that lives inside a plugin: it expands no plugin-root placeholder and resolves relative paths against your home directory. So a hook writes an sdlc-tracker entry with the resolved absolute path into ~/.cursor/mcp.json, and rewrites it after each plugin update. Set false to manage that entry yourself. Ignored by Claude Code and Copilot, which can both launch the bundled server directly."
 }

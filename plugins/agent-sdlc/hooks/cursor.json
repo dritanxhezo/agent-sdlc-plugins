@@ -1,6 +1,12 @@
 {
   "version": 1,
   "hooks": {
+    "workspaceOpen": [
+      {
+        "command": "node ./hooks/adapters/cursor.mjs mcp-register",
+        "timeout": 10
+      }
+    ],
     "sessionStart": [
       {
         "command": "node ./hooks/adapters/cursor.mjs session-context"

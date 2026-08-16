@@ -80,5 +80,19 @@ copies loose files with no plugin manifest behind them, so no hooks are register
 gates become advisory. That is why the installer writes them into
 `.github/copilot-instructions.md` as well.
 
+## Notes on Cursor
+
+Cursor cannot start an MCP server that lives inside a plugin: it expands no plugin-root
+placeholder in `mcp.json`, injects no plugin-root variable into the server process, and
+resolves a relative argument against your home directory. Its hooks are the exception, and
+they run from the plugin root — so the `workspaceOpen` hook writes an `sdlc-tracker` entry
+with the resolved absolute path into `~/.cursor/mcp.json`, and rewrites it after each plugin
+update, when the install path's commit sha changes.
+
+Cursor does not watch that file, so the tracker appears after the next **Developer: Reload
+Window**. An entry pointing anywhere other than this plugin's own server is treated as a
+deliberate override and left alone, as is a file that does not parse. Set
+`registerCursorMcp: false` in `sdlc.config.json` to opt out entirely.
+
 See the [repository README](https://github.com/dritanxhezo/agent-sdlc-plugins) for
 installation and development.

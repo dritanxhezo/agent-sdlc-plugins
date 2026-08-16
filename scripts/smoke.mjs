@@ -8,6 +8,8 @@
  */
 
 import { spawnSync } from 'node:child_process';
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -23,7 +25,13 @@ const EXPECTED_TOOLS = [
   'dependency_graph', 'render_gantt', 'plan_status',
 ];
 
-const LEAKED_SECRET = 'const t = "ghp_abcdefghijklmnopqrstuvwxyz0123456789";';
+/**
+ * Assembled at runtime rather than written out, so this file holds no token-shaped
+ * literal. The gate it exercises reads the whole resulting file on every write, so a
+ * literal here would deny all later edits to this file - and would equally trip
+ * GitHub's own push protection.
+ */
+const LEAKED_SECRET = `const t = "${['ghp', 'abcdefghijklmnopqrstuvwxyz0123456789'].join('_')}";`;
 
 const failures = [];
 
@@ -37,12 +45,18 @@ const check = (label, condition, detail = '') => {
   failures.push(label);
 };
 
-/** @param {string} script @param {string[]} args @param {object} payload */
-const runWithPayload = (script, args, payload) => {
+/**
+ * @param {string} script
+ * @param {string[]} args
+ * @param {object} payload
+ * @param {Record<string, string>} [env] Added to the child's environment.
+ */
+const runWithPayload = (script, args, payload, env) => {
   const result = spawnSync(process.execPath, [script, ...args], {
     input: JSON.stringify(payload),
     encoding: 'utf8',
     timeout: 20000,
+    env: env ? { ...process.env, ...env } : process.env,
   });
   return { stdout: (result.stdout ?? '').trim(), status: result.status };
 };
@@ -122,6 +136,30 @@ process.stdout.write('\nCursor hook adapter\n');
   });
   check('fails open on a malformed payload',
     malformed.status === 0 && JSON.parse((malformed.stdout ?? '{}').trim()).permission === 'allow');
+
+  // Cursor starts no MCP server that lives inside a plugin, so workspaceOpen writes a
+  // resolved absolute path into the user's own config. Pointed at a throwaway home
+  // directory, because the alternative is editing the developer's real one.
+  const home = mkdtempSync(join(tmpdir(), 'agent-sdlc-smoke-home-'));
+  try {
+    const registered = runWithPayload(
+      CURSOR_ADAPTER,
+      ['mcp-register'],
+      { hook_event_name: 'workspaceOpen', workspace_roots: [REPO_ROOT] },
+      { USERPROFILE: home, HOME: home },
+    );
+    check('workspaceOpen returns a valid empty response', registered.status === 0 && registered.stdout === '{}',
+      registered.stdout);
+
+    const written = JSON.parse(readFileSync(join(home, '.cursor', 'mcp.json'), 'utf8'));
+    const [script] = written.mcpServers?.['sdlc-tracker']?.args ?? [];
+    check('registers the tracker in the user MCP config', typeof script === 'string', registered.stdout);
+    check('resolves the path instead of leaving a placeholder',
+      typeof script === 'string' && !script.includes('${') && script.endsWith('mcp/sdlc-tracker/src/index.mjs'),
+      script);
+  } finally {
+    rmSync(home, { recursive: true, force: true });
+  }
 }
 
 process.stdout.write('\nClaude hook adapter\n');
