@@ -23,7 +23,11 @@ const ALLOW_RESPONSE = { permission: 'allow' };
 /** @param {object} payload @returns {string} */
 const resolveRoot = (payload) => {
   const roots = payload.workspace_roots;
-  if (Array.isArray(roots) && typeof roots[0] === 'string') return roots[0];
+  // On Windows, Cursor reports roots in URI-path form ('/f:/Repo'). Used verbatim,
+  // that resolves to '<cwd drive>:\f:\Repo', so sdlc.config.json is never found and
+  // every gate silently runs on defaults. Strip the leading slash before a drive letter.
+  if (Array.isArray(roots) && typeof roots[0] === 'string')
+    return roots[0].replace(/^\/([a-zA-Z]:)/, '$1');
   return payload.cwd ?? process.cwd();
 };
 
